@@ -1,37 +1,46 @@
 package com.lovelyn.course_advizor.course_adviser;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Table;
-import javax.persistence.Id;
+import com.lovelyn.course_advizor.department.Department;
+import com.lovelyn.course_advizor.section.Section;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.persistence.*;
+import java.time.LocalDateTime;
 
-
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Entity
 @Table(name="course_advisers")
 public class CourseAdviser {
 
   @Id
   @GeneratedValue(strategy=GenerationType.AUTO)
-  public Long id;
+  private Long id;
 
   @Column(name="first_name")
-  @JsonProperty("first_name")
-  public String firstName;
+  private String firstName;
 
   @Column(name="last_name")
-  @JsonProperty("last_name")
-  public String lastName;
+  private String lastName;
 
-  public String pin;
+  private String pin;
 
   @Column(name="phone_number")
-  @JsonProperty("phone_number")
-  public String phoneNumber;
+  private String phoneNumber;
 
-  public String section;
-  
+  @Column(name = "created_at")
+  @CreationTimestamp
+  private LocalDateTime createdAt;
+
+  @ManyToOne
+  @JoinColumn(name = "department_id")
+  private Department department;
+
+  @ManyToOne
+  @JoinColumn(name = "section_id")
+  private Section section;
+
 }
