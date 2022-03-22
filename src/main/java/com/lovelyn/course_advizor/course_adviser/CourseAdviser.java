@@ -28,7 +28,7 @@ public class CourseAdviser {
 
   private String pin;
 
-  @Column(name="phone_number")
+  @Column(name="phone_number", unique = true)
   private String phoneNumber;
 
   @Column(name = "created_at")

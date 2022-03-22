@@ -17,6 +17,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.util.Objects;
 import java.util.Optional;
 
 @Path("course-adviser")
@@ -42,11 +43,7 @@ public class CourseAdviserController {
   @POST
   @Path("create")
   public Response create(
-    @NotNull(
-      message = "request_body / "+
-        ValidationErrorCode.BODY_INVALID +
-        " / Request body cannot be null"
-    )
+    @NotNull(message = ValidationErrorCode.BODY_INVALID)
     @Valid final CourseAdviserCreateDTO courseAdviserDTO,
     @Context final UriInfo uriInfo
   ) {
@@ -69,6 +66,27 @@ public class CourseAdviserController {
       .created(uriInfo.getAbsolutePath())
       .entity(new ResponseDTO<>(ResponseDTO.Status.SUCCESS, "Course adviser created", responseEntity))
       .build();
+  }
+
+  @POST
+  @Path("auth")
+  public Response auth(@NotNull(message = ValidationErrorCode.BODY_INVALID) @Valid final CourseAdviserAuthDTO courseAdviserDTO) {
+
+    final Optional<CourseAdviser> courseAdviserOptional = repository.findByPhoneNumber(courseAdviserDTO.getPhoneNumber());
+
+    final CourseAdviser courseAdviser = courseAdviserOptional.orElseThrow(()-> new NotAuthorizedException("Credentials are incorrect"));
+
+    if (Objects.equals(courseAdviserDTO.getPin(), courseAdviser.getPin())) {
+
+      final CourseAdviserDTO responseEntity = modelMapper.map(courseAdviser, CourseAdviserDTO.class);
+
+      return Response
+        .ok(new ResponseDTO<>(ResponseDTO.Status.SUCCESS, "Authenticated", responseEntity))
+        .build();
+
+    } else {
+      throw new NotAuthorizedException("Credentials are incorrect");
+    }
   }
 
   @GET

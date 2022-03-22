@@ -2,6 +2,7 @@ package com.lovelyn.course_advizor.exception;
 
 import com.lovelyn.course_advizor.ResponseDTO;
 
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -17,6 +18,8 @@ public class JerseyExceptionMapper implements ExceptionMapper<Exception> {
 
     if (exception instanceof NotFoundException) {
       responseBuilder = Response.status(Response.Status.NOT_FOUND);
+    } else if (exception instanceof NotAuthorizedException) {
+        responseBuilder = Response.status(Response.Status.UNAUTHORIZED);
     } else {
       responseBuilder = Response.serverError();
     }
