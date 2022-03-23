@@ -1,6 +1,7 @@
-package com.lovelyn.course_advizor.section;
+package com.lovelyn.course_advizor.session;
 
 import com.lovelyn.course_advizor.course_adviser.CourseAdviser;
+import com.lovelyn.course_advizor.result.Result;
 import lombok.*;
 
 import javax.persistence.*;
@@ -10,9 +11,9 @@ import java.util.List;
 @Setter
 @ToString
 @Entity
-@Table(name = "sections")
+@Table(name = "sessions")
 @NoArgsConstructor
-public class Section {
+public class Session {
   
   @Id
   private Long id;
@@ -23,8 +24,12 @@ public class Section {
   @Column(name = "ended_at")
   private Integer endedAt;
 
-  @OneToMany(mappedBy = "section")
+  @OneToMany(mappedBy = "session")
   @ToString.Exclude
   private List<CourseAdviser> courseAdvisers;
+
+  @OneToMany(mappedBy = "session")
+  @ToString.Exclude
+  private List<Result> results;
 
 }

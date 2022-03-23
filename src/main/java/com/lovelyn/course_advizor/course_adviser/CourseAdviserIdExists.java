@@ -6,11 +6,11 @@ import java.lang.annotation.*;
 
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = CourseAdviserPhoneNumberAlreadyExistsValidator.class)
+@Constraint(validatedBy = CourseAdviserIdExistsValidator.class)
 @Documented
-public @interface CourseAdviserPhoneNumberAlreadyExists {
+public @interface CourseAdviserIdExists {
 
-  String message() default "Course Adviser with phone number already exists";
+  String message() default "Course adviser not found";
 
   Class<?>[] groups() default { };
 

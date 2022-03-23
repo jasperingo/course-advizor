@@ -1,4 +1,4 @@
-package com.lovelyn.course_advizor.course_adviser;
+package com.lovelyn.course_advizor.student;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -6,11 +6,11 @@ import java.lang.annotation.*;
 
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = CourseAdviserPhoneNumberAlreadyExistsValidator.class)
+@Constraint(validatedBy = StudentMatriculationNumberAlreadyExistsValidator.class)
 @Documented
-public @interface CourseAdviserPhoneNumberAlreadyExists {
+public @interface StudentMatriculationNumberAlreadyExists {
 
-  String message() default "Course Adviser with phone number already exists";
+  String message() default "Student with matriculation number already exists";
 
   Class<?>[] groups() default { };
 

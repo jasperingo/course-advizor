@@ -8,6 +8,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Provider
 public class JerseyExceptionMapper implements ExceptionMapper<Exception> {
@@ -24,6 +26,8 @@ public class JerseyExceptionMapper implements ExceptionMapper<Exception> {
     } else {
       responseBuilder = Response.serverError();
     }
+
+    Logger.getLogger(JerseyExceptionMapper.class.getName()).log(Level.SEVERE, null, exception);
 
     return responseBuilder
       .entity(new ResponseDTO<>(ResponseDTO.Status.ERROR, exception.getMessage(), exception.getStackTrace()))

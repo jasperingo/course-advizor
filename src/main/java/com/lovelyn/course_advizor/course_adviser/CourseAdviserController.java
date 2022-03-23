@@ -1,11 +1,9 @@
 package com.lovelyn.course_advizor.course_adviser;
 
 import com.lovelyn.course_advizor.ResponseDTO;
-import com.lovelyn.course_advizor.department.Department;
 import com.lovelyn.course_advizor.department.DepartmentRepository;
 import com.lovelyn.course_advizor.exception.ValidationErrorCode;
-import com.lovelyn.course_advizor.section.Section;
-import com.lovelyn.course_advizor.section.SectionRepository;
+import com.lovelyn.course_advizor.session.SessionRepository;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,14 +33,13 @@ public class CourseAdviserController {
 
   @Autowired
   @Setter
-  private SectionRepository sectionRepository;
+  private SessionRepository sessionRepository;
 
   @Autowired
   @Setter
   private ModelMapper modelMapper;
 
   @POST
-  @Path("")
   public Response create(
     @NotNull(message = ValidationErrorCode.BODY_INVALID)
     @Valid final CourseAdviserCreateDTO courseAdviserDTO,
@@ -51,13 +48,8 @@ public class CourseAdviserController {
 
     final CourseAdviser courseAdviser = modelMapper.map(courseAdviserDTO, CourseAdviser.class);
 
-    final Optional<Section> section = sectionRepository.findById(courseAdviserDTO.getSectionId());
-    final Optional<Department> department = departmentRepository.findById(courseAdviserDTO.getDepartmentId());
-
-    if (section.isPresent() && department.isPresent()) {
-      courseAdviser.setSection(section.get());
-      courseAdviser.setDepartment(department.get());
-    }
+    sessionRepository.findById(courseAdviserDTO.getSessionId()).ifPresent(courseAdviser::setSession);
+    departmentRepository.findById(courseAdviserDTO.getDepartmentId()).ifPresent(courseAdviser::setDepartment);
 
     final CourseAdviser newCourseAdviser = repository.save(courseAdviser);
 
@@ -92,7 +84,6 @@ public class CourseAdviserController {
 
   @CourseAdviserAuth
   @GET
-  @Path("")
   public Response get(@Context final ContainerRequestContext requestContainer) {
 
     final CourseAdviser courseAdviser = (CourseAdviser) requestContainer.getProperty("user");

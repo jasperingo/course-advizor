@@ -1,17 +1,13 @@
 package com.lovelyn.course_advizor.student;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.lovelyn.course_advizor.course_adviser.CourseAdviserIdExists;
 import com.lovelyn.course_advizor.exception.ValidationErrorCode;
-import com.lovelyn.course_advizor.validation.ValidationGroupOne;
-import com.lovelyn.course_advizor.validation.ValidationGroupSequence;
-import com.lovelyn.course_advizor.validation.ValidationGroupTwo;
+import com.lovelyn.course_advizor.ValidationGroupSequence;
 import lombok.Data;
 
 import javax.validation.GroupSequence;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 @Data
 @GroupSequence({StudentCreateDTO.class, ValidationGroupSequence.class})
@@ -22,7 +18,7 @@ public class StudentCreateDTO {
     message = "first_name / "+
       ValidationErrorCode.FIELD_INVALID +
       " / First name is invalid",
-    groups = ValidationGroupOne.class
+    groups = ValidationGroupSequence.ValidationGroupOne.class
   )
   private String firstName;
 
@@ -31,7 +27,7 @@ public class StudentCreateDTO {
     message = "last_name / "+
       ValidationErrorCode.FIELD_INVALID +
       " / Last name is invalid",
-    groups = ValidationGroupOne.class
+    groups = ValidationGroupSequence.ValidationGroupOne.class
   )
   private String lastName;
 
@@ -40,7 +36,7 @@ public class StudentCreateDTO {
     message = "matriculation_number / "+
       ValidationErrorCode.FIELD_INVALID +
       " / Matriculation number is required",
-    groups = ValidationGroupOne.class
+    groups = ValidationGroupSequence.ValidationGroupOne.class
   )
   @Size(
     max = 11,
@@ -48,7 +44,20 @@ public class StudentCreateDTO {
     message = "matriculation_number / "+
       ValidationErrorCode.FIELD_INVALID +
       " / Matriculation number must be {max} characters long",
-    groups = ValidationGroupTwo.class
+    groups = ValidationGroupSequence.ValidationGroupTwo.class
+  )
+  @Pattern(
+    regexp = "\\d+",
+    message = "matriculation_number / "+
+      ValidationErrorCode.FIELD_INVALID +
+      " / Matriculation number is invalid",
+    groups = ValidationGroupSequence.ValidationGroupThree.class
+  )
+  @StudentMatriculationNumberAlreadyExists(
+    message = "matriculation_number / "+
+      ValidationErrorCode.FIELD_INVALID +
+      " / Matriculation number already exists",
+    groups = ValidationGroupSequence.ValidationGroupFour.class
   )
   private String matriculationNumber;
 
@@ -57,14 +66,20 @@ public class StudentCreateDTO {
     message = "course_adviser_id / "+
       ValidationErrorCode.FIELD_INVALID +
       " / Course adviser id is invalid",
-    groups = ValidationGroupOne.class
+    groups = ValidationGroupSequence.ValidationGroupOne.class
   )
   @Min(
     value = 1,
     message = "course_adviser_id / "+
       ValidationErrorCode.ID_INVALID +
       " / Course adviser id cannot be less than one",
-    groups = ValidationGroupTwo.class
+    groups = ValidationGroupSequence.ValidationGroupTwo.class
+  )
+  @CourseAdviserIdExists(
+    message = "course_adviser_id / "+
+      ValidationErrorCode.ID_INVALID +
+      " / Course adviser with id ${validatedValue} do not exist",
+    groups = ValidationGroupSequence.ValidationGroupThree.class
   )
   private Long courseAdviserId;
 

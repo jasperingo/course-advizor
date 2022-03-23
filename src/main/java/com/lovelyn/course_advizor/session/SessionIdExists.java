@@ -1,4 +1,4 @@
-package com.lovelyn.course_advizor.section;
+package com.lovelyn.course_advizor.session;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -6,9 +6,9 @@ import java.lang.annotation.*;
 
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = SectionIdExistsValidator.class)
+@Constraint(validatedBy = SessionIdExistsValidator.class)
 @Documented
-public @interface SectionIdExists {
+public @interface SessionIdExists {
 
   String message() default "Section not found";
 

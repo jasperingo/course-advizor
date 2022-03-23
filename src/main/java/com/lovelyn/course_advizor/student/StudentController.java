@@ -35,7 +35,6 @@ public class StudentController {
 
 
   @POST
-  @Path("")
   public Response create(
     @NotNull(message = ValidationErrorCode.BODY_INVALID)
     @Valid final StudentCreateDTO studentCreateDTO,

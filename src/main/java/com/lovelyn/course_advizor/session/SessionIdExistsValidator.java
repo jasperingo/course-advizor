@@ -1,4 +1,4 @@
-package com.lovelyn.course_advizor.section;
+package com.lovelyn.course_advizor.session;
 
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,11 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class SectionIdExistsValidator implements ConstraintValidator<SectionIdExists, Long> {
+public class SessionIdExistsValidator implements ConstraintValidator<SessionIdExists, Long> {
 
   @Autowired
   @Setter
-  private SectionRepository repository;
+  private SessionRepository repository;
 
   @Override
   public boolean isValid(Long id, ConstraintValidatorContext constraintValidatorContext) {

@@ -2,7 +2,7 @@ package com.lovelyn.course_advizor.course_adviser;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lovelyn.course_advizor.department.DepartmentDTO;
-import com.lovelyn.course_advizor.section.SectionDTO;
+import com.lovelyn.course_advizor.session.SessionDTO;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
@@ -24,6 +24,6 @@ public class CourseAdviserDTO {
 
     private DepartmentDTO department;
 
-    private SectionDTO section;
+    private SessionDTO section;
   
 }

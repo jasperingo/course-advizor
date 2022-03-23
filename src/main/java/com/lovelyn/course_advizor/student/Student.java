@@ -28,7 +28,7 @@ public class Student {
   @Column(name="last_name")
   private String lastName;
 
-  @Column(name = "matriculation_number")
+  @Column(name = "matriculation_number", unique = true)
   private String matriculationNumber;
 
   @Column(name = "created_at")

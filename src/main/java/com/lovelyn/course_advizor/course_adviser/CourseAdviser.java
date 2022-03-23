@@ -1,7 +1,8 @@
 package com.lovelyn.course_advizor.course_adviser;
 
 import com.lovelyn.course_advizor.department.Department;
-import com.lovelyn.course_advizor.section.Section;
+import com.lovelyn.course_advizor.result.Result;
+import com.lovelyn.course_advizor.session.Session;
 import com.lovelyn.course_advizor.student.Student;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -42,11 +43,15 @@ public class CourseAdviser {
   private Department department;
 
   @ManyToOne
-  @JoinColumn(name = "section_id")
-  private Section section;
+  @JoinColumn(name = "session_id")
+  private Session session;
 
   @OneToMany(mappedBy = "courseAdviser")
   @ToString.Exclude
   private List<Student> students;
+
+  @OneToMany(mappedBy = "courseAdviser")
+  @ToString.Exclude
+  private List<Result> results;
 
 }
