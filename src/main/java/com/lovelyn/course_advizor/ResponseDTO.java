@@ -7,7 +7,7 @@ import lombok.Value;
 public class ResponseDTO<T> {
 
     public enum Status {
-        SUCCESS, ERROR;
+        SUCCESS, ERROR
     }
 
     Status status;
@@ -15,5 +15,6 @@ public class ResponseDTO<T> {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     String message;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     T data;
 }

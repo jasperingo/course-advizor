@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
+import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -41,7 +42,7 @@ public class CourseAdviserController {
   private ModelMapper modelMapper;
 
   @POST
-  @Path("create")
+  @Path("")
   public Response create(
     @NotNull(message = ValidationErrorCode.BODY_INVALID)
     @Valid final CourseAdviserCreateDTO courseAdviserDTO,
@@ -89,22 +90,18 @@ public class CourseAdviserController {
     }
   }
 
+  @CourseAdviserAuth
   @GET
-  @Path("{id}")
-  public Response get(@PathParam("id") final Long id) {
+  @Path("")
+  public Response get(@Context final ContainerRequestContext requestContainer) {
 
-    final Optional<CourseAdviser> courseAdviser = repository.findById(id);
+    final CourseAdviser courseAdviser = (CourseAdviser) requestContainer.getProperty("user");
 
-    if (courseAdviser.isPresent()) {
-      final CourseAdviserDTO courseAdviserDTO = modelMapper.map(courseAdviser.get(), CourseAdviserDTO.class);
+    final CourseAdviserDTO courseAdviserDTO = modelMapper.map(courseAdviser, CourseAdviserDTO.class);
 
-      return Response
-        .ok(new ResponseDTO<>(ResponseDTO.Status.SUCCESS, "Course Adviser fetched", courseAdviserDTO))
-        .build();
-    } else {
-      throw new NotFoundException("Course adviser not found");
-    }
+    return Response
+      .ok(new ResponseDTO<>(ResponseDTO.Status.SUCCESS, "Course Adviser fetched", courseAdviserDTO))
+      .build();
   }
 
-  
 }

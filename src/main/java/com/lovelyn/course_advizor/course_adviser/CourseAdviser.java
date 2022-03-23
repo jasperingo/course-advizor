@@ -2,11 +2,13 @@ package com.lovelyn.course_advizor.course_adviser;
 
 import com.lovelyn.course_advizor.department.Department;
 import com.lovelyn.course_advizor.section.Section;
+import com.lovelyn.course_advizor.student.Student;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -42,5 +44,9 @@ public class CourseAdviser {
   @ManyToOne
   @JoinColumn(name = "section_id")
   private Section section;
+
+  @OneToMany(mappedBy = "courseAdviser")
+  @ToString.Exclude
+  private List<Student> students;
 
 }
