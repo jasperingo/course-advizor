@@ -2,8 +2,8 @@ package com.lovelyn.course_advizor.student;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lovelyn.course_advizor.course_adviser.CourseAdviserIdExists;
-import com.lovelyn.course_advizor.exception.ValidationErrorCode;
-import com.lovelyn.course_advizor.ValidationGroupSequence;
+import com.lovelyn.course_advizor.validation.ValidationErrorCode;
+import com.lovelyn.course_advizor.validation.ValidationGroupSequence;
 import lombok.Data;
 
 import javax.validation.GroupSequence;

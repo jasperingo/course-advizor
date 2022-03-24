@@ -2,7 +2,7 @@ package com.lovelyn.course_advizor.course_adviser;
 
 import com.lovelyn.course_advizor.ResponseDTO;
 import com.lovelyn.course_advizor.department.DepartmentRepository;
-import com.lovelyn.course_advizor.exception.ValidationErrorCode;
+import com.lovelyn.course_advizor.validation.ValidationErrorCode;
 import com.lovelyn.course_advizor.session.SessionRepository;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
@@ -82,8 +82,8 @@ public class CourseAdviserController {
     }
   }
 
-  @CourseAdviserAuth
   @GET
+  @CourseAdviserAuthentication
   public Response get(@Context final ContainerRequestContext requestContainer) {
 
     final CourseAdviser courseAdviser = (CourseAdviser) requestContainer.getProperty("user");

@@ -1,6 +1,7 @@
 package com.lovelyn.course_advizor.student;
 
 import com.lovelyn.course_advizor.course_adviser.CourseAdviser;
+import com.lovelyn.course_advizor.result.StudentResult;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -38,5 +40,9 @@ public class Student {
   @ManyToOne
   @JoinColumn(name = "course_adviser_id")
   private CourseAdviser courseAdviser;
+
+  @OneToMany(mappedBy = "student")
+  @ToString.Exclude
+  private List<StudentResult> studentResult;
 
 }

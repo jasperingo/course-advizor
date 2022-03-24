@@ -1,7 +1,7 @@
 package com.lovelyn.course_advizor.course_adviser;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.lovelyn.course_advizor.exception.ValidationErrorCode;
+import com.lovelyn.course_advizor.validation.ValidationErrorCode;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;

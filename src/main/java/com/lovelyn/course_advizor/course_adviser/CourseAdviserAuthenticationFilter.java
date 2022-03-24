@@ -15,9 +15,9 @@ import javax.ws.rs.ext.Provider;
 import java.util.Optional;
 
 @Provider
-@CourseAdviserAuth
+@CourseAdviserAuthentication
 @Priority(Priorities.AUTHENTICATION)
-public class CourseAdviserAuthorizationFilter implements ContainerRequestFilter {
+public class CourseAdviserAuthenticationFilter implements ContainerRequestFilter {
 
   @Autowired
   @Setter
@@ -47,7 +47,7 @@ public class CourseAdviserAuthorizationFilter implements ContainerRequestFilter 
   private Response getNotAuthResponse() {
     return Response
       .status(Response.Status.UNAUTHORIZED)
-      .entity(new ResponseDTO<>(ResponseDTO.Status.ERROR, "Not authorized", null))
+      .entity(new ResponseDTO<>(ResponseDTO.Status.ERROR, "Authentication failed", null))
       .type(MediaType.APPLICATION_JSON)
       .build();
   }

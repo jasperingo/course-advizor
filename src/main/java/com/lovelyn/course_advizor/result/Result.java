@@ -1,5 +1,6 @@
 package com.lovelyn.course_advizor.result;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.lovelyn.course_advizor.course_adviser.CourseAdviser;
 import com.lovelyn.course_advizor.session.Session;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -24,6 +26,7 @@ public class Result {
     FIRST("first"),
     SECOND("second");
 
+    @JsonValue
     public final String value;
 
     Semester(String value) {
@@ -53,5 +56,9 @@ public class Result {
   @ManyToOne
   @JoinColumn(name = "course_adviser_id")
   private CourseAdviser courseAdviser;
+
+  @OneToMany(mappedBy = "result")
+  @ToString.Exclude
+  private List<StudentResult> studentResult;
 
 }

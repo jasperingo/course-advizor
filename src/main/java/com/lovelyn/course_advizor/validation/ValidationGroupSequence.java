@@ -1,4 +1,4 @@
-package com.lovelyn.course_advizor;
+package com.lovelyn.course_advizor.validation;
 
 import javax.validation.GroupSequence;
 

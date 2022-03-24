@@ -2,7 +2,7 @@ package com.lovelyn.course_advizor.student;
 
 import com.lovelyn.course_advizor.ResponseDTO;
 import com.lovelyn.course_advizor.course_adviser.CourseAdviserRepository;
-import com.lovelyn.course_advizor.exception.ValidationErrorCode;
+import com.lovelyn.course_advizor.validation.ValidationErrorCode;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

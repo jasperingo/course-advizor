@@ -2,9 +2,9 @@ package com.lovelyn.course_advizor.course_adviser;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lovelyn.course_advizor.department.DepartmentIdExists;
-import com.lovelyn.course_advizor.exception.ValidationErrorCode;
+import com.lovelyn.course_advizor.validation.ValidationErrorCode;
 import com.lovelyn.course_advizor.session.SessionIdExists;
-import com.lovelyn.course_advizor.ValidationGroupSequence;
+import com.lovelyn.course_advizor.validation.ValidationGroupSequence;
 import lombok.Data;
 
 import javax.validation.GroupSequence;
@@ -85,20 +85,20 @@ public class CourseAdviserCreateDTO {
   @NotNull(
     message = "section_id / "+
       ValidationErrorCode.FIELD_INVALID +
-      " / Section id is invalid",
+      " / Session id is invalid",
     groups = ValidationGroupSequence.ValidationGroupOne.class
   )
   @Min(
     value = 1,
     message = "section_id / "+
       ValidationErrorCode.ID_INVALID +
-      " / Section id cannot be less than one",
+      " / Session id cannot be less than one",
     groups = ValidationGroupSequence.ValidationGroupTwo.class
   )
   @SessionIdExists(
     message = "section_id / "+
       ValidationErrorCode.ID_INVALID +
-      " / Section with id ${validatedValue} do not exist",
+      " / Session with id ${validatedValue} do not exist",
     groups = ValidationGroupSequence.ValidationGroupThree.class
   )
   private Long sessionId;

@@ -1,4 +1,4 @@
-package com.lovelyn.course_advizor.session;
+package com.lovelyn.course_advizor.student;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -6,11 +6,11 @@ import java.lang.annotation.*;
 
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = SessionIdExistsValidator.class)
+@Constraint(validatedBy = StudentIdExistsValidator.class)
 @Documented
-public @interface SessionIdExists {
+public @interface StudentIdExists {
 
-  String message() default "Session not found";
+  String message() default "Student not found";
 
   Class<?>[] groups() default { };
 

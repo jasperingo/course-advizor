@@ -1,4 +1,4 @@
-package com.lovelyn.course_advizor.exception;
+package com.lovelyn.course_advizor.validation;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
@@ -14,5 +14,7 @@ public class ValidationError {
     String errorCode;
 
     Object value;
+
+    Integer index;
 
 }
