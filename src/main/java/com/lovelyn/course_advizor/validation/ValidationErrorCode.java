@@ -37,14 +37,18 @@ public class ValidationErrorCode {
     public final static String SEMESTER_REQUIRED = "semester / "+FIELD_REQUIRED+" / Semester is required";
 
 
-    public final static String STUDENT_RESULTS_REQUIRED = "student_results / "+FIELD_REQUIRED+" / Student results are required";
-
-
     public final static String STUDENT_ID_REQUIRED = "student_id / "+FIELD_REQUIRED+" / Student id is required";
 
     public final static String STUDENT_ID_MIN = "student_id / "+FIELD_SIZE+" / Student id cannot be less than one";
 
     public final static String STUDENT_ID_DO_NOT_EXIST = "student_id / "+FIELD_DO_NOT_EXIST+" / Student with id ${validatedValue} do not exist";
+
+
+    public final static String RESULT_ID_REQUIRED = "result_id / "+FIELD_REQUIRED+" / Result id is required";
+
+    public final static String RESULT_ID_MIN = "result_id / "+FIELD_SIZE+" / Result id cannot be less than one";
+
+    public final static String RESULT_ID_DO_NOT_EXIST = "result_id / "+FIELD_DO_NOT_EXIST+" / Result with id ${validatedValue} do not exist";
 
 
     public final static String GRADE_REQUIRED = "grade / "+FIELD_REQUIRED+" / Grade is required";

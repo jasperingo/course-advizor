@@ -1,16 +1,13 @@
 package com.lovelyn.course_advizor.result;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.lovelyn.course_advizor.student.StudentIdExists;
-import com.lovelyn.course_advizor.validation.ValidationGroupSequence;
-import com.lovelyn.course_advizor.validation.ValidationErrorCode;
 import com.lovelyn.course_advizor.session.SessionIdExists;
+import com.lovelyn.course_advizor.validation.ValidationErrorCode;
+import com.lovelyn.course_advizor.validation.ValidationGroupSequence;
 import lombok.Data;
 
 import javax.validation.GroupSequence;
-import javax.validation.Valid;
 import javax.validation.constraints.*;
-import java.util.List;
 
 @Data
 @GroupSequence({ResultCreateDTO.class, ValidationGroupSequence.class})
@@ -53,41 +50,6 @@ public class ResultCreateDTO {
     message = ValidationErrorCode.SESSION_ID_DO_NOT_EXIST,
     groups = ValidationGroupSequence.ValidationGroupThree.class
   )
-  private Long sectionId;
+  private Long sessionId;
 
-  @Valid
-  @JsonProperty("student_results")
-  @NotEmpty(
-    message = ValidationErrorCode.STUDENT_RESULTS_REQUIRED,
-    groups = ValidationGroupSequence.ValidationGroupOne.class
-  )
-  private List<StudentResultCreateDTO> studentResultCreateDTO;
-
-  @Data
-  @GroupSequence({StudentResultCreateDTO.class, ValidationGroupSequence.class})
-  public static class StudentResultCreateDTO {
-
-    @NotNull(
-      message = ValidationErrorCode.GRADE_REQUIRED,
-      groups = ValidationGroupSequence.ValidationGroupOne.class
-    )
-    private StudentResult.Grade grade;
-
-    @JsonProperty("student_id")
-    @NotNull(
-      message = ValidationErrorCode.STUDENT_ID_REQUIRED,
-      groups = ValidationGroupSequence.ValidationGroupOne.class
-    )
-    @Min(
-      value = 1,
-      message = ValidationErrorCode.STUDENT_ID_MIN,
-      groups = ValidationGroupSequence.ValidationGroupTwo.class
-    )
-    @StudentIdExists(
-      message = ValidationErrorCode.STUDENT_ID_DO_NOT_EXIST,
-      groups = ValidationGroupSequence.ValidationGroupThree.class
-    )
-    private Long studentId;
-
-  }
 }

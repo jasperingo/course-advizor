@@ -1,6 +1,5 @@
 package com.lovelyn.course_advizor.result;
 
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.lovelyn.course_advizor.student.Student;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,26 +17,15 @@ import javax.persistence.*;
 public class StudentResult {
 
   public enum Grade {
-
-    A('A'),
-    B('B'),
-    C('C'),
-    D('D'),
-    E('E'),
-    F('F');
-
-    @JsonValue
-    public final Character value;
-
-    Grade(Character value) {
-      this.value = value;
-    }
+    A, B, C, D, E, F;
   }
 
   @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(nullable = false)
   private Long id;
 
+  @Enumerated(EnumType.STRING)
   private Grade grade;
 
   @ManyToOne

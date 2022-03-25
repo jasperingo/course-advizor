@@ -24,6 +24,6 @@ public class CourseAdviserDTO {
 
     private DepartmentDTO department;
 
-    private SessionDTO section;
+    private SessionDTO session;
   
 }

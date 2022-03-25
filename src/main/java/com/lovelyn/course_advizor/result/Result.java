@@ -42,7 +42,7 @@ public class Result {
   @Column(name = "course_code")
   private String courseCode;
 
-  @Enumerated(EnumType.STRING)
+  @Convert(converter = SemesterConverter.class)
   private Semester semester;
 
   @Column(name = "created_at")
@@ -60,5 +60,24 @@ public class Result {
   @OneToMany(mappedBy = "result")
   @ToString.Exclude
   private List<StudentResult> studentResult;
+
+  public static class SemesterConverter implements AttributeConverter<Semester, String> {
+
+    @Override
+    public String convertToDatabaseColumn(Semester attribute) {
+      return attribute.value;
+    }
+
+    @Override
+    public Semester convertToEntityAttribute(String dbData) {
+      if (dbData.equals(Semester.FIRST.value))
+          return Semester.FIRST;
+
+      if (dbData.equals(Semester.SECOND.value))
+        return Semester.SECOND;
+
+      return null;
+    }
+  }
 
 }

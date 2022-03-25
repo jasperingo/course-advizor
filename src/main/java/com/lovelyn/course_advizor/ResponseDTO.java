@@ -17,4 +17,12 @@ public class ResponseDTO<T> {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     T data;
+
+    public static <E> ResponseDTO<E> success(final String message, final E data) {
+        return new ResponseDTO<>(Status.SUCCESS, message, data);
+    }
+
+    public static <E> ResponseDTO<E> error(final String message, final E data) {
+        return new ResponseDTO<>(Status.ERROR, message, data);
+    }
 }
