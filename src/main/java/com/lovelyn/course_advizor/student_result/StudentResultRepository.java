@@ -1,4 +1,4 @@
-package com.lovelyn.course_advizor.result;
+package com.lovelyn.course_advizor.student_result;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

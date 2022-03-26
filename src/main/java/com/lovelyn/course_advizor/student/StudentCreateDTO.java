@@ -14,71 +14,48 @@ import javax.validation.constraints.*;
 public class StudentCreateDTO {
 
   @JsonProperty("first_name")
-  @NotBlank(
-    message = "first_name / "+
-      ValidationErrorCode.FIELD_INVALID +
-      " / First name is invalid",
+  @NotEmpty(
+    message = ValidationErrorCode.FIRST_NAME_REQUIRED,
     groups = ValidationGroupSequence.ValidationGroupOne.class
   )
   private String firstName;
 
   @JsonProperty("last_name")
   @NotBlank(
-    message = "last_name / "+
-      ValidationErrorCode.FIELD_INVALID +
-      " / Last name is invalid",
+    message = ValidationErrorCode.LAST_NAME_REQUIRED,
     groups = ValidationGroupSequence.ValidationGroupOne.class
   )
   private String lastName;
 
   @JsonProperty("matriculation_number")
   @NotBlank(
-    message = "matriculation_number / "+
-      ValidationErrorCode.FIELD_INVALID +
-      " / Matriculation number is required",
+    message = ValidationErrorCode.MATRICULATION_NUMBER_REQUIRED,
     groups = ValidationGroupSequence.ValidationGroupOne.class
   )
   @Size(
     max = 11,
     min = 11,
-    message = "matriculation_number / "+
-      ValidationErrorCode.FIELD_INVALID +
-      " / Matriculation number must be {max} characters long",
+    message = ValidationErrorCode.MATRICULATION_NUMBER_SIZE,
     groups = ValidationGroupSequence.ValidationGroupTwo.class
   )
-  @Pattern(
-    regexp = "\\d+",
-    message = "matriculation_number / "+
-      ValidationErrorCode.FIELD_INVALID +
-      " / Matriculation number is invalid",
-    groups = ValidationGroupSequence.ValidationGroupThree.class
-  )
   @StudentMatriculationNumberAlreadyExists(
-    message = "matriculation_number / "+
-      ValidationErrorCode.FIELD_INVALID +
-      " / Matriculation number already exists",
+    message = ValidationErrorCode.MATRICULATION_NUMBER_EXISTS,
     groups = ValidationGroupSequence.ValidationGroupFour.class
   )
   private String matriculationNumber;
 
   @JsonProperty("course_adviser_id")
   @NotNull(
-    message = "course_adviser_id / "+
-      ValidationErrorCode.FIELD_INVALID +
-      " / Course adviser id is invalid",
+    message = ValidationErrorCode.COURSE_ADVISER_ID_REQUIRED,
     groups = ValidationGroupSequence.ValidationGroupOne.class
   )
   @Min(
     value = 1,
-    message = "course_adviser_id / "+
-      ValidationErrorCode.ID_INVALID +
-      " / Course adviser id cannot be less than one",
+    message = ValidationErrorCode.COURSE_ADVISER_ID_MIN,
     groups = ValidationGroupSequence.ValidationGroupTwo.class
   )
   @CourseAdviserIdExists(
-    message = "course_adviser_id / "+
-      ValidationErrorCode.ID_INVALID +
-      " / Course adviser with id ${validatedValue} do not exist",
+    message = ValidationErrorCode.COURSE_ADVISER_ID_DO_NOT_EXIST,
     groups = ValidationGroupSequence.ValidationGroupThree.class
   )
   private Long courseAdviserId;

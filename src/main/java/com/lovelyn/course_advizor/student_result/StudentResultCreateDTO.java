@@ -1,6 +1,7 @@
-package com.lovelyn.course_advizor.result;
+package com.lovelyn.course_advizor.student_result;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.lovelyn.course_advizor.result.ResultIdExists;
 import com.lovelyn.course_advizor.student.StudentIdExists;
 import com.lovelyn.course_advizor.validation.ValidationErrorCode;
 import com.lovelyn.course_advizor.validation.ValidationGroupSequence;
@@ -11,7 +12,10 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Data
-@StudentResultStudentAndResultIdNotChanged(groups = ValidationGroupSequence.ValidationGroupFour.class)
+@StudentResultStudentAndResultIdAlreadyExists(
+  message = ValidationErrorCode.STUDENT_RESULT_STUDENT_AND_RESULT_ID_EXISTS,
+  groups = ValidationGroupSequence.ValidationGroupFour.class
+)
 @GroupSequence({StudentResultCreateDTO.class, ValidationGroupSequence.class})
 public class StudentResultCreateDTO {
 
@@ -52,5 +56,4 @@ public class StudentResultCreateDTO {
     groups = ValidationGroupSequence.ValidationGroupThree.class
   )
   private Long resultId;
-
 }

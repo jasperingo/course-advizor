@@ -1,6 +1,7 @@
-package com.lovelyn.course_advizor.result;
+package com.lovelyn.course_advizor.student_result;
 
 import com.lovelyn.course_advizor.ResponseDTO;
+import com.lovelyn.course_advizor.result.ResultRepository;
 import com.lovelyn.course_advizor.student.StudentRepository;
 import com.lovelyn.course_advizor.validation.ValidationErrorCode;
 import lombok.Setter;
@@ -10,9 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Objects;
 
 @Path("student-result")
 @Produces(MediaType.APPLICATION_JSON)
@@ -34,12 +36,12 @@ public class StudentResultController {
   @Setter
   private ModelMapper modelMapper;
 
+  @Context
+  @Setter
+  private ContainerRequestContext containerRequestContext;
+
   @POST
   public Response create(@NotNull(message = ValidationErrorCode.BODY_INVALID) @Valid final StudentResultCreateDTO studentResultCreateDTO) {
-
-    if (studentResultRepository.existsByStudentIdAndResultId(studentResultCreateDTO.getStudentId(), studentResultCreateDTO.getResultId())) {
-      throw new BadRequestException("Student result with student and result id already exists");
-    }
 
     final StudentResult studentResult = modelMapper.map(studentResultCreateDTO, StudentResult.class);
 
@@ -59,19 +61,10 @@ public class StudentResultController {
 
   @PUT
   @Path("{id}")
-  public Response update(
-    @PathParam("id") final Long id,
-    @NotNull(message = ValidationErrorCode.BODY_INVALID) @Valid final StudentResultCreateDTO studentResultCreateDTO
-  ) {
+  @StudentResultFetch
+  public Response update(@NotNull(message = ValidationErrorCode.BODY_INVALID) @Valid final StudentResultUpdateDTO studentResultCreateDTO) {
 
-    final StudentResult studentResult = studentResultRepository.findById(id).orElseThrow(() -> new NotFoundException("Student result not found"));
-
-    if (
-      !Objects.equals(studentResult.getStudent().getId(), studentResultCreateDTO.getStudentId()) ||
-        !Objects.equals(studentResult.getResult().getId(), studentResultCreateDTO.getResultId())
-    ) {
-      throw new BadRequestException("Student result student id and result id cannot be change");
-    }
+    final StudentResult studentResult = (StudentResult) containerRequestContext.getProperty(StudentResultFetchFilter.REQUEST_PROPERTY);
 
     studentResult.setGrade(studentResultCreateDTO.getGrade());
 

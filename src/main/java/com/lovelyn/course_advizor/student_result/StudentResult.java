@@ -1,5 +1,6 @@
-package com.lovelyn.course_advizor.result;
+package com.lovelyn.course_advizor.student_result;
 
+import com.lovelyn.course_advizor.result.Result;
 import com.lovelyn.course_advizor.student.Student;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

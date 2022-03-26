@@ -41,9 +41,8 @@ public class CourseAdviserController {
 
   @POST
   public Response create(
-    @NotNull(message = ValidationErrorCode.BODY_INVALID)
-    @Valid final CourseAdviserCreateDTO courseAdviserDTO,
-    @Context final UriInfo uriInfo
+    @Context final UriInfo uriInfo,
+    @NotNull(message = ValidationErrorCode.BODY_INVALID) @Valid final CourseAdviserCreateDTO courseAdviserDTO
   ) {
 
     final CourseAdviser courseAdviser = modelMapper.map(courseAdviserDTO, CourseAdviser.class);

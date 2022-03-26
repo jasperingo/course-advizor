@@ -16,89 +16,75 @@ public class CourseAdviserCreateDTO {
 
   @JsonProperty("first_name")
   @NotEmpty(
-    message = "first_name / "+
-      ValidationErrorCode.FIELD_INVALID +
-      " / First name is invalid",
+    message = ValidationErrorCode.FIRST_NAME_REQUIRED,
     groups = ValidationGroupSequence.ValidationGroupOne.class
   )
   private String firstName;
 
   @JsonProperty("last_name")
   @NotBlank(
-    message = "last_name / "+
-      ValidationErrorCode.FIELD_INVALID +
-      " / Last name is invalid",
+    message = ValidationErrorCode.LAST_NAME_REQUIRED,
     groups = ValidationGroupSequence.ValidationGroupOne.class
   )
   private String lastName;
 
+  @NotBlank(
+    message = ValidationErrorCode.PIN_REQUIRED,
+    groups = ValidationGroupSequence.ValidationGroupOne.class
+  )
   @Size(
     min = 4,
     max = 4,
-    message = "pin / "+
-      ValidationErrorCode.FIELD_INVALID +
-      " / Pin must be {max} characters long",
-    groups = ValidationGroupSequence.ValidationGroupOne.class
+    message = ValidationErrorCode.PIN_SIZE,
+    groups = ValidationGroupSequence.ValidationGroupTwo.class
   )
   private String pin;
 
   @JsonProperty("phone_number")
+  @NotBlank(
+    message = ValidationErrorCode.PHONE_NUMBER_REQUIRED,
+    groups = ValidationGroupSequence.ValidationGroupOne.class
+  )
   @Size(
     max = 11,
     min = 11,
-    message = "phone_number / "+
-      ValidationErrorCode.FIELD_INVALID +
-      " / Phone number must be {max} characters long",
-    groups = ValidationGroupSequence.ValidationGroupOne.class
+    message = ValidationErrorCode.PHONE_NUMBER_SIZE,
+    groups = ValidationGroupSequence.ValidationGroupTwo.class
   )
   @CourseAdviserPhoneNumberAlreadyExists(
-    message = "phone_number / "+
-      ValidationErrorCode.FIELD_EXISTS +
-      " / Phone number already exists",
-    groups = ValidationGroupSequence.ValidationGroupTwo.class
+    message = ValidationErrorCode.PHONE_NUMBER_EXISTS,
+    groups = ValidationGroupSequence.ValidationGroupThree.class
   )
   private String phoneNumber;
 
   @JsonProperty("department_id")
   @NotNull(
-    message = "department_id / "+
-      ValidationErrorCode.FIELD_INVALID +
-      " / Department id is invalid",
+    message = ValidationErrorCode.DEPARTMENT_ID_REQUIRED,
     groups = ValidationGroupSequence.ValidationGroupOne.class
   )
   @Min(
     value = 1,
-    message = "department_id / "+
-      ValidationErrorCode.ID_INVALID +
-      " / Department id cannot be less than one",
+    message = ValidationErrorCode.DEPARTMENT_ID_MIN,
     groups = ValidationGroupSequence.ValidationGroupTwo.class
   )
   @DepartmentIdExists(
-    message = "department_id / "+
-      ValidationErrorCode.ID_INVALID +
-      " / Department with id ${validatedValue} do not exist",
+    message = ValidationErrorCode.DEPARTMENT_ID_DO_NOT_EXIST,
     groups = ValidationGroupSequence.ValidationGroupThree.class
   )
   private Long departmentId;
 
   @JsonProperty("session_id")
   @NotNull(
-    message = "section_id / "+
-      ValidationErrorCode.FIELD_INVALID +
-      " / Session id is invalid",
+    message = ValidationErrorCode.SESSION_ID_REQUIRED,
     groups = ValidationGroupSequence.ValidationGroupOne.class
   )
   @Min(
     value = 1,
-    message = "section_id / "+
-      ValidationErrorCode.ID_INVALID +
-      " / Session id cannot be less than one",
+    message = ValidationErrorCode.SESSION_ID_MIN,
     groups = ValidationGroupSequence.ValidationGroupTwo.class
   )
   @SessionIdExists(
-    message = "section_id / "+
-      ValidationErrorCode.ID_INVALID +
-      " / Session with id ${validatedValue} do not exist",
+    message = ValidationErrorCode.SESSION_ID_DO_NOT_EXIST,
     groups = ValidationGroupSequence.ValidationGroupThree.class
   )
   private Long sessionId;

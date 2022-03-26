@@ -1,7 +1,7 @@
 package com.lovelyn.course_advizor.student;
 
 import com.lovelyn.course_advizor.course_adviser.CourseAdviser;
-import com.lovelyn.course_advizor.result.StudentResult;
+import com.lovelyn.course_advizor.student_result.StudentResult;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;

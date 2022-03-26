@@ -7,6 +7,7 @@ import com.lovelyn.course_advizor.session.SessionRepository;
 import com.lovelyn.course_advizor.student.Student;
 import com.lovelyn.course_advizor.student.StudentDTO;
 import com.lovelyn.course_advizor.student.StudentRepository;
+import com.lovelyn.course_advizor.student_result.StudentResultRepository;
 import com.lovelyn.course_advizor.validation.ValidationErrorCode;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
@@ -69,11 +70,11 @@ public class ResultController {
   }
 
   @GET
+  @ResultFetch
   @Path("{id}")
-  public Response get(@PathParam("id") final Long id) {
+  public Response get() {
 
-    final Result result = resultRepository.findById(id)
-      .orElseThrow(() -> new NotFoundException("Result not found"));
+    final Result result = (Result) requestContainer.getProperty(ResultFetchFilter.REQUEST_PROPERTY);
 
     final ResultDTO resultDTO = modelMapper.map(result, ResultDTO.class);
 
@@ -83,6 +84,7 @@ public class ResultController {
   }
 
   @GET
+  @ResultFetch
   @Path("{id}/student")
   public Response getStudents(@PathParam("id") final Long id) {
 
@@ -101,6 +103,5 @@ public class ResultController {
       .ok(ResponseDTO.success("Result students fetched", studentDTOList))
       .build();
   }
-
 
 }
