@@ -11,6 +11,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Data
+@StudentResultStudentAndResultIdNotChanged(groups = ValidationGroupSequence.ValidationGroupFour.class)
 @GroupSequence({StudentResultCreateDTO.class, ValidationGroupSequence.class})
 public class StudentResultCreateDTO {
 

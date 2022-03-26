@@ -41,8 +41,8 @@ public class Student {
   @JoinColumn(name = "course_adviser_id")
   private CourseAdviser courseAdviser;
 
-  @OneToMany(mappedBy = "student")
   @ToString.Exclude
+  @OneToMany(mappedBy = "student")
   private List<StudentResult> studentResult;
 
 }

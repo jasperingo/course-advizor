@@ -4,6 +4,9 @@ import com.lovelyn.course_advizor.ResponseDTO;
 import com.lovelyn.course_advizor.course_adviser.CourseAdviser;
 import com.lovelyn.course_advizor.course_adviser.CourseAdviserAuthentication;
 import com.lovelyn.course_advizor.session.SessionRepository;
+import com.lovelyn.course_advizor.student.Student;
+import com.lovelyn.course_advizor.student.StudentDTO;
+import com.lovelyn.course_advizor.student.StudentRepository;
 import com.lovelyn.course_advizor.validation.ValidationErrorCode;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
@@ -16,6 +19,7 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 @Path("result")
 @CourseAdviserAuthentication
@@ -28,7 +32,15 @@ public class ResultController {
 
   @Autowired
   @Setter
+  private StudentResultRepository studentResultRepository;
+
+  @Autowired
+  @Setter
   private SessionRepository sessionRepository;
+
+  @Autowired
+  @Setter
+  private StudentRepository studentRepository;
 
   @Autowired
   @Setter
@@ -72,10 +84,21 @@ public class ResultController {
 
   @GET
   @Path("{id}/student")
-  public Response getStudents() {
+  public Response getStudents(@PathParam("id") final Long id) {
+
+    final CourseAdviser courseAdviser = (CourseAdviser) requestContainer.getProperty("user");
+
+    List<Student> students = studentRepository.findAllByCourseAdviserId(courseAdviser.getId());
+
+    List<StudentDTO.StudentWithResultDTO> studentDTOList = students.stream()
+      .map(student -> {
+        student.setStudentResult(studentResultRepository.findAllByStudentIdAndResultId(student.getId(), id));
+        return modelMapper.map(student, StudentDTO.StudentWithResultDTO.class);
+      })
+      .toList();
 
     return Response
-      .ok(ResponseDTO.success("Result students fetched", null))
+      .ok(ResponseDTO.success("Result students fetched", studentDTOList))
       .build();
   }
 

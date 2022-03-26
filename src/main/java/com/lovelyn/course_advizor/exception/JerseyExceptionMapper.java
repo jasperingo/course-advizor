@@ -22,7 +22,7 @@ public class JerseyExceptionMapper implements ExceptionMapper<Exception> {
     if (exception instanceof NotFoundException) {
       responseBuilder = Response.status(Response.Status.NOT_FOUND);
     } else if (exception instanceof NotAuthorizedException) {
-        responseBuilder = Response.status(Response.Status.UNAUTHORIZED);
+      responseBuilder = Response.status(Response.Status.UNAUTHORIZED);
     } else {
       responseBuilder = Response.serverError();
     }

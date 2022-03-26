@@ -14,4 +14,12 @@ public class StudentResultDTO {
 
   private StudentDTO student;
 
+  @Data
+  public static class StudentResultGradeDTO {
+
+    private Long id;
+
+    private StudentResult.Grade grade;
+
+  }
 }
