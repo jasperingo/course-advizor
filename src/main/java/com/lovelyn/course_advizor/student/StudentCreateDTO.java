@@ -20,12 +20,14 @@ public class StudentCreateDTO {
   )
   private String firstName;
 
+
   @JsonProperty("last_name")
   @NotBlank(
     message = ValidationErrorCode.LAST_NAME_REQUIRED,
     groups = ValidationGroupSequence.ValidationGroupOne.class
   )
   private String lastName;
+
 
   @JsonProperty("matriculation_number")
   @NotBlank(
@@ -43,6 +45,25 @@ public class StudentCreateDTO {
     groups = ValidationGroupSequence.ValidationGroupFour.class
   )
   private String matriculationNumber;
+
+
+  @JsonProperty("phone_number")
+  @NotBlank(
+    message = ValidationErrorCode.PHONE_NUMBER_REQUIRED,
+    groups = ValidationGroupSequence.ValidationGroupOne.class
+  )
+  @Size(
+    max = 11,
+    min = 11,
+    message = ValidationErrorCode.PHONE_NUMBER_SIZE,
+    groups = ValidationGroupSequence.ValidationGroupTwo.class
+  )
+  @StudentPhoneNumberAlreadyExists(
+    message = ValidationErrorCode.PHONE_NUMBER_EXISTS,
+    groups = ValidationGroupSequence.ValidationGroupThree.class
+  )
+  private String phoneNumber;
+
 
   @JsonProperty("course_adviser_id")
   @NotNull(

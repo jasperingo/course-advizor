@@ -33,6 +33,9 @@ public class Student {
   @Column(name = "matriculation_number", unique = true)
   private String matriculationNumber;
 
+  @Column(name = "phone_number", unique = true)
+  private String phoneNumber;
+
   @Column(name = "created_at")
   @CreationTimestamp
   private LocalDateTime createdAt;

@@ -1,6 +1,7 @@
 package com.lovelyn.course_advizor.course_adviser;
 
 import com.lovelyn.course_advizor.ResponseDTO;
+import com.lovelyn.course_advizor.Utils;
 import com.lovelyn.course_advizor.department.DepartmentRepository;
 import com.lovelyn.course_advizor.validation.ValidationErrorCode;
 import com.lovelyn.course_advizor.session.SessionRepository;
@@ -49,6 +50,8 @@ public class CourseAdviserController {
 
     sessionRepository.findById(courseAdviserDTO.getSessionId()).ifPresent(courseAdviser::setSession);
     departmentRepository.findById(courseAdviserDTO.getDepartmentId()).ifPresent(courseAdviser::setDepartment);
+
+    courseAdviser.setPhoneNumber(Utils.phoneNumberToInternationalFormat(courseAdviser.getPhoneNumber()));
 
     final CourseAdviser newCourseAdviser = repository.save(courseAdviser);
 

@@ -1,6 +1,7 @@
 package com.lovelyn.course_advizor.student;
 
 import com.lovelyn.course_advizor.ResponseDTO;
+import com.lovelyn.course_advizor.Utils;
 import com.lovelyn.course_advizor.course_adviser.CourseAdviserRepository;
 import com.lovelyn.course_advizor.validation.ValidationErrorCode;
 import lombok.Setter;
@@ -45,6 +46,8 @@ public class StudentController {
 
     courseAdviserRepository.findById(studentCreateDTO.getCourseAdviserId())
       .ifPresent(student::setCourseAdviser);
+
+    student.setPhoneNumber(Utils.phoneNumberToInternationalFormat(student.getPhoneNumber()));
 
     final Student student1 = studentRepository.save(student);
 

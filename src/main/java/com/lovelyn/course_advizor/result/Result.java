@@ -24,14 +24,17 @@ public class Result {
 
   public enum Semester {
 
-    FIRST("first"),
-    SECOND("second");
+    FIRST("first", 1),
+    SECOND("second", 2);
 
     @JsonValue
     public final String value;
 
-    Semester(String value) {
+    public final Integer number;
+
+    Semester(String value, Integer number) {
       this.value = value;
+      this.number = number;
     }
   }
 

@@ -15,6 +15,9 @@ public class CallResponse {
   @XmlElement(name = "GetDigits")
   private GetDigits getDigits;
 
+  @XmlElement(name = "Redirect")
+  private Redirect redirect;
+
   @Data
   @XmlAccessorType(XmlAccessType.FIELD)
   public static class Say {
@@ -35,7 +38,7 @@ public class CallResponse {
     private String callbackUrl;
 
     @XmlAttribute
-    private String numDigits;
+    private Integer numDigits;
 
     @XmlAttribute
     private String timeout;
@@ -45,6 +48,15 @@ public class CallResponse {
 
     @XmlElement(name = "Say")
     private Say say;
+
+  }
+
+  @Data
+  @XmlAccessorType(XmlAccessType.FIELD)
+  public static class Redirect {
+
+    @XmlValue
+    private String value;
 
   }
 

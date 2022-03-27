@@ -22,6 +22,9 @@ public class StudentDTO {
   @JsonProperty("matriculation_number")
   private String matriculationNumber;
 
+  @JsonProperty("phone_number")
+  private String phoneNumber;
+
   @Data
   @EqualsAndHashCode(callSuper = true)
   public static class StudentWithCourseAdviser extends StudentDTO {
