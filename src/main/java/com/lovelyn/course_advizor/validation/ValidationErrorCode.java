@@ -86,6 +86,8 @@ public class ValidationErrorCode {
 
     public final static String RESULT_ID_DO_NOT_EXIST = "result_id / "+FIELD_DO_NOT_EXIST+" / Result with id ${validatedValue} do not exist";
 
+    public final static String RESULT_WITH_COURSE_CODE_SESSION_ID_AND_SEMESTER_EXISTS = "request_body / COURSE_CODE_SESSION_ID_AND_SEMESTER_EXISTS / Result with course code, session id and semester already exists";
+
 
     public final static String STUDENT_RESULT_STUDENT_AND_RESULT_ID_EXISTS = "request_body / STUDENT_ID_AND_RESULT_ID_FIELD_EXISTS / Student result with student and result id already exists";
 

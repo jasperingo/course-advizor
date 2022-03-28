@@ -10,6 +10,10 @@ import javax.validation.GroupSequence;
 import javax.validation.constraints.*;
 
 @Data
+@ResultWithCourseCodeSessionAndSemesterAlreadyExists(
+  message = ValidationErrorCode.RESULT_WITH_COURSE_CODE_SESSION_ID_AND_SEMESTER_EXISTS,
+  groups = ValidationGroupSequence.ValidationGroupFour.class
+)
 @GroupSequence({ResultCreateDTO.class, ValidationGroupSequence.class})
 public class ResultCreateDTO {
 
