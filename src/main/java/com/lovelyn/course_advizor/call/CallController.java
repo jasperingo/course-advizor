@@ -1,6 +1,8 @@
 package com.lovelyn.course_advizor.call;
 
 import com.lovelyn.course_advizor.Utils;
+import com.lovelyn.course_advizor.appointment.Appointment;
+import com.lovelyn.course_advizor.appointment.AppointmentRepository;
 import com.lovelyn.course_advizor.result.Result;
 import com.lovelyn.course_advizor.result.ResultRepository;
 import com.lovelyn.course_advizor.session.Session;
@@ -56,21 +58,12 @@ public class CallController {
   @Setter
   private StudentResultRepository studentResultRepository;
 
+  @Autowired
+  @Setter
+  private AppointmentRepository appointmentRepository;
+
   private String nextCallbackUrl(final String path) {
     return Utils.replaceUriLastPath(uriInfo.getAbsolutePath(), path);
-  }
-
-  private CallResponse redirectToEnd() {
-
-    final CallResponse callResponse = new CallResponse();
-
-    final CallResponse.Redirect redirect = new CallResponse.Redirect();
-
-    redirect.setValue(nextCallbackUrl("end"));
-
-    callResponse.setRedirect(redirect);
-
-    return callResponse;
   }
 
   private Call getCall() {
@@ -93,13 +86,8 @@ public class CallController {
 
   @POST
   @Path("start")
-  public CallResponse start(
-    @FormParam("isActive") final String isActive,
-    @FormParam("callerNumber") final String phoneNumber,
-    @FormParam("sessionId") final String callSessionId
-  ) {
-
-    if (isActive.equals("0")) return redirectToEnd();
+  @CallActive
+  public CallResponse start(@FormParam("callerNumber") final String phoneNumber, @FormParam("sessionId") final String callSessionId) {
 
     final Optional<Student> optionalStudent = studentRepository.findByPhoneNumber(phoneNumber);
 
@@ -143,13 +131,9 @@ public class CallController {
 
   @POST
   @Path("auth")
+  @CallActive
   @CallFetchByCallSessionId
-  public CallResponse auth(
-    @FormParam("isActive") final String isActive,
-    @FormParam("dtmfDigits") final String matriculationNumber
-  ) {
-
-    if (isActive.equals("0")) return redirectToEnd();
+  public CallResponse auth(@FormParam("dtmfDigits") final String matriculationNumber) {
 
     final Call call = getCall();
 
@@ -189,17 +173,11 @@ public class CallController {
 
   @POST
   @Path("action")
+  @CallActive
   @CallFetchByCallSessionId
-  public CallResponse action(
-    @FormParam("isActive") final String isActive,
-    @FormParam("dtmfDigits") final String actionString
-  ) {
-
-    if (isActive.equals("0")) return redirectToEnd();
+  public CallResponse action(@FormParam("dtmfDigits") final int actionNumber) {
 
     final Call call = getCall();
-
-    final int actionNumber = Integer.parseInt(actionString);
 
     final CallResponse callResponse = new CallResponse();
 
@@ -229,6 +207,14 @@ public class CallController {
 
       callRepository.save(call);
 
+      final Appointment appointment = new Appointment();
+
+      appointment.setStudent(call.getStudent());
+
+      appointment.setStatus(Appointment.Status.PENDING);
+
+      appointmentRepository.save(appointment);
+
       say.setValue("Your appointment request is awaiting acceptance by your course adviser, thank you for calling.");
 
       callResponse.setSay(say);
@@ -238,6 +224,18 @@ public class CallController {
       call.setAction(Call.Action.REPORT);
 
       callRepository.save(call);
+
+      say.setValue("Please say your report after the beep, and press the # key once you are done.");
+
+      final CallResponse.Record record = new CallResponse.Record();
+
+      record.setFinishOnKey("#");
+
+      record.setCallbackUrl(nextCallbackUrl("report"));
+
+      record.setSay(say);
+
+      callResponse.setRecord(record);
     }
 
     return callResponse;
@@ -245,13 +243,9 @@ public class CallController {
 
   @POST
   @Path("result-session")
+  @CallActive
   @CallFetchByCallSessionId
-  public CallResponse resultSession(
-    @FormParam("isActive") final String isActive,
-    @FormParam("dtmfDigits") final String sessionYears
-  ) {
-
-    if (isActive.equals("0")) return redirectToEnd();
+  public CallResponse resultSession(@FormParam("dtmfDigits") final String sessionYears) {
 
     final CallResponse callResponse = new CallResponse();
 
@@ -321,39 +315,35 @@ public class CallController {
 
   @POST
   @Path("result")
+  @CallActive
   @CallFetchByCallSessionId
-  public CallResponse result(
-    @FormParam("isActive") final String isActive,
-    @FormParam("dtmfDigits") final String semesterString
-  ) {
-
-    if (isActive.equals("0")) return redirectToEnd();
+  public CallResponse result(@FormParam("dtmfDigits") final int semesterNumber) {
 
     final CallResponse callResponse = new CallResponse();
 
     final CallResponse.Say say = new CallResponse.Say();
 
-    final int semesterNumber = Integer.parseInt(semesterString);
-
     final Call call = getCall();
 
-    List<Result> results = null;
+    try {
 
-    if (semesterNumber == Result.Semester.FIRST.number) {
-      results = resultRepository.findAllByCourseAdviserIdAndSessionIdAndSemester(
-        call.getStudent().getCourseAdviser().getId(),
-        call.getSession().getId(),
-        Result.Semester.FIRST
-      );
-    } else if (semesterNumber == Result.Semester.SECOND.number) {
-      results = resultRepository.findAllByCourseAdviserIdAndSessionIdAndSemester(
-        call.getStudent().getCourseAdviser().getId(),
-        call.getSession().getId(),
-        Result.Semester.SECOND
-      );
-    }
+      List<Result> results = null;
 
-    if (results != null && !results.isEmpty()) {
+      if (semesterNumber == Result.Semester.FIRST.number) {
+        results = resultRepository.findAllByCourseAdviserIdAndSessionIdAndSemester(
+          call.getStudent().getCourseAdviser().getId(),
+          call.getSession().getId(),
+          Result.Semester.FIRST
+        );
+      } else if (semesterNumber == Result.Semester.SECOND.number) {
+        results = resultRepository.findAllByCourseAdviserIdAndSessionIdAndSemester(
+          call.getStudent().getCourseAdviser().getId(),
+          call.getSession().getId(),
+          Result.Semester.SECOND
+        );
+      }
+
+      if (results == null || results.isEmpty()) throw new IllegalArgumentException();
 
       final String resultString = results.stream()
         .map(result -> {
@@ -362,20 +352,18 @@ public class CallController {
             result.getId()
           );
           return studentResults.size() < 1 ? null
-          : String.format("in %s you got %s", result.getCourseCode(), studentResults.get(0).getGrade());
+            : String.format("in %s you got %s", result.getCourseCode(), studentResults.get(0).getGrade());
         })
         .filter(Objects::nonNull)
         .collect(Collectors.joining(", "));
 
-      say.setValue(
-        resultString.isEmpty() ?
-          "Sorry, you do not have any result for this semester of the session, thank you for calling."
-          : String.format("Please write this down, %s. Thank you for calling.", resultString)
-      );
+      if (resultString.isEmpty()) throw new IllegalArgumentException();
+
+      say.setValue(String.format("Please write this down, %s. Thank you for calling.", resultString));
 
       callResponse.setSay(say);
 
-    } else {
+    } catch (IllegalArgumentException e) {
 
       say.setValue("Sorry, you do not have any result for this semester of the session, thank you for calling.");
 
@@ -405,7 +393,6 @@ public class CallController {
     call.setStatus(Call.Status.INACTIVE);
 
     callRepository.save(call);
-
   }
 
 }

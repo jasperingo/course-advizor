@@ -9,11 +9,14 @@ import javax.xml.bind.annotation.*;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CallResponse {
 
-  @XmlElement(name = "Say")
-  private Say say;
-
   @XmlElement(name = "GetDigits")
   private GetDigits getDigits;
+
+  @XmlElement(name = "Record")
+  private Record record;
+
+  @XmlElement(name = "Say")
+  private Say say;
 
   @XmlElement(name = "Redirect")
   private Redirect redirect;
@@ -60,4 +63,26 @@ public class CallResponse {
 
   }
 
+  @Data
+  @XmlAccessorType(XmlAccessType.FIELD)
+  public static class Record {
+
+    @XmlAttribute
+    private String callbackUrl;
+
+    @XmlAttribute
+    private String finishOnKey;
+
+    @XmlAttribute
+    private String maxLength;
+
+    @XmlAttribute
+    private boolean trimSilence= true;
+
+    @XmlAttribute
+    private boolean playBeep= true ;
+
+    @XmlElement(name = "Say")
+    private Say say;
+  }
 }

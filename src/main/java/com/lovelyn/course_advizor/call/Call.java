@@ -99,14 +99,16 @@ public class Call {
 
     @Override
     public Action convertToEntityAttribute(String dbData) {
-      if (dbData.equals(Action.RESULT.name().toLowerCase()))
-        return Action.RESULT;
+      if (dbData != null) {
+        if (dbData.equals(Action.RESULT.name().toLowerCase()))
+          return Action.RESULT;
 
-      if (dbData.equals(Action.APPOINTMENT.name().toLowerCase()))
-        return Action.APPOINTMENT;
+        if (dbData.equals(Action.APPOINTMENT.name().toLowerCase()))
+          return Action.APPOINTMENT;
 
-      if (dbData.equals(Action.REPORT.name().toLowerCase()))
-        return Action.REPORT;
+        if (dbData.equals(Action.REPORT.name().toLowerCase()))
+          return Action.REPORT;
+      }
 
       return null;
     }
