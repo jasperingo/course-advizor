@@ -1,4 +1,4 @@
-package com.lovelyn.course_advizor.appointment;
+package com.lovelyn.course_advizor.report;
 
 import com.lovelyn.course_advizor.ResponseDTO;
 import com.lovelyn.course_advizor.course_adviser.CourseAdviser;
@@ -19,9 +19,9 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
 
-@Path("appointment")
+@Path("report")
 @Produces(MediaType.APPLICATION_JSON)
-public class AppointmentController {
+public class ReportController {
 
   @Context
   @Setter
@@ -29,7 +29,7 @@ public class AppointmentController {
 
   @Autowired
   @Setter
-  private AppointmentRepository appointmentRepository;
+  private ReportRepository reportRepository;
 
   @Autowired
   @Setter
@@ -43,14 +43,14 @@ public class AppointmentController {
   @CourseAdviserAuthentication
   public Response getList() {
 
-    List<Appointment> appointments = appointmentRepository.findAllByStudentCourseAdviserId(getCourseAdviser().getId());
+    List<Report> reports = reportRepository.findAllByStudentCourseAdviserId(getCourseAdviser().getId());
 
-    List<AppointmentDTO.AppointmentWithStudentDTO> appointmentWithStudentDTOList = appointments.stream()
-      .map(appointment -> modelMapper.map(appointment, AppointmentDTO.AppointmentWithStudentDTO.class))
+    List<ReportDTO.ReportWithStudentDTO> reportWithStudentDTOList = reports.stream()
+      .map(report -> modelMapper.map(report, ReportDTO.ReportWithStudentDTO.class))
       .toList();
 
     return Response
-      .ok(ResponseDTO.success("Appointments fetched", appointmentWithStudentDTOList))
+      .ok(ResponseDTO.success("Reports fetched", reportWithStudentDTOList))
       .build();
   }
 
@@ -58,33 +58,31 @@ public class AppointmentController {
   @Path("{id}")
   public Response update(
     @PathParam("id") final Long id,
-    @NotNull(message = ValidationErrorCode.BODY_INVALID) @Valid final AppointmentUpdateDTO appointmentUpdateDTO
+    @NotNull(message = ValidationErrorCode.BODY_INVALID) @Valid final ReportUpdateDTO reportUpdateDTO
   ) {
 
-    final Optional<Appointment> optionalAppointment = appointmentRepository.findById(id);
+    final Optional<Report> optionalReport = reportRepository.findById(id);
 
     Response.ResponseBuilder responseBuilder;
 
-    if (optionalAppointment.isPresent()) {
+    if (optionalReport.isPresent()) {
 
-      Appointment appointment = optionalAppointment.get();
+      final Report report = optionalReport.get();
 
-      appointment.setStatus(appointmentUpdateDTO.getStatus());
+      report.setReply(reportUpdateDTO.getReply());
 
-      appointment.setStartedAt(appointmentUpdateDTO.getStartedAt());
+      final Report updatedReport = reportRepository.save(report);
 
-      final Appointment updatedAppointment = appointmentRepository.save(appointment);
+      final ReportDTO reportDTO = modelMapper.map(updatedReport, ReportDTO.class);
 
-      final AppointmentDTO appointmentDTO = modelMapper.map(updatedAppointment, AppointmentDTO.class);
-
-      responseBuilder = Response.ok(ResponseDTO.success("Appointment updated", appointmentDTO));
+      responseBuilder = Response.ok(ResponseDTO.success("Report updated", reportDTO));
 
       // TODO: send call to student...
 
     } else {
       responseBuilder = Response
         .status(Response.Status.NOT_FOUND)
-        .entity(ResponseDTO.error("Appointment not found", null));
+        .entity(ResponseDTO.error("Report not found", null));
     }
 
     return responseBuilder.build();

@@ -13,6 +13,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Setter
 @Getter
@@ -24,17 +25,29 @@ public class Result {
 
   public enum Semester {
 
-    FIRST("first", 1),
-    SECOND("second", 2);
+    FIRST("1"),
+    SECOND("2");
 
     @JsonValue
-    public final String value;
+    public String getName() {
+      return name().toLowerCase();
+    }
 
-    public final Integer number;
+    public final String number;
 
-    Semester(String value, Integer number) {
-      this.value = value;
+    Semester(String number) {
       this.number = number;
+    }
+
+    public static Semester fromString(final String value) {
+
+      if (Objects.equals(value, SECOND.number))
+        return SECOND;
+
+      if (Objects.equals(value, FIRST.number))
+        return FIRST;
+
+      return null;
     }
   }
 
@@ -69,15 +82,15 @@ public class Result {
 
     @Override
     public String convertToDatabaseColumn(Semester attribute) {
-      return attribute.value;
+      return attribute.getName();
     }
 
     @Override
     public Semester convertToEntityAttribute(String dbData) {
-      if (dbData.equals(Semester.FIRST.value))
+      if (dbData.equals(Semester.FIRST.getName()))
           return Semester.FIRST;
 
-      if (dbData.equals(Semester.SECOND.value))
+      if (dbData.equals(Semester.SECOND.getName()))
         return Semester.SECOND;
 
       return null;

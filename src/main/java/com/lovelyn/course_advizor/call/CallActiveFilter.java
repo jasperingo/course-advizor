@@ -17,7 +17,7 @@ import javax.ws.rs.ext.Provider;
 
 @Provider
 @CallActive
-@Priority(Priorities.USER)
+@Priority(Priorities.AUTHORIZATION)
 public class CallActiveFilter implements ContainerRequestFilter {
 
   @Context

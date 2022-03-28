@@ -8,6 +8,8 @@ public interface ResultRepository extends JpaRepository<Result, Long> {
 
   boolean existsByCourseAdviserIdAndSessionId(Long courseAdviserId, Long sessionId);
 
+  List<Result> findAllByCourseAdviserId(Long courseAdviserId);
+
   List<Result> findAllByCourseAdviserIdAndSessionIdAndSemester(Long courseAdviserId, Long sessionId, Result.Semester semester);
 
 }

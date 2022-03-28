@@ -10,6 +10,7 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Form;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 import java.util.Optional;
 
@@ -41,12 +42,16 @@ public class CallFetchByCallSessionIdFilter implements ContainerRequestFilter {
 
       optionalCall.ifPresentOrElse(
         call -> requestContext.setProperty(REQUEST_PROPERTY, call),
-        () -> requestContext.abortWith(null)
+        () -> requestContext.abortWith(response())
       );
 
     } catch (ProcessingException | NullPointerException | IndexOutOfBoundsException e) {
-      requestContext.abortWith(null);
+      requestContext.abortWith(response());
     }
+  }
+
+  private Response response() {
+    return Response.status(Response.Status.NO_CONTENT).build();
   }
 
 }

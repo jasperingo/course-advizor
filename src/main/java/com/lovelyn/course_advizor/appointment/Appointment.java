@@ -1,7 +1,11 @@
 package com.lovelyn.course_advizor.appointment;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.lovelyn.course_advizor.student.Student;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -16,7 +20,12 @@ import java.time.LocalDateTime;
 public class Appointment {
 
   public enum Status {
-    PENDING, DECLINED, ACCEPTED
+    PENDING, DECLINED, ACCEPTED;
+
+    @JsonValue
+    public String getName() {
+      return name().toLowerCase();
+    }
   }
 
   @Id
@@ -24,7 +33,7 @@ public class Appointment {
   @Column(nullable = false)
   private Long id;
 
-  @Enumerated(EnumType.STRING)
+  @Convert(converter = StatusConverter.class)
   private Status status;
 
   @Column(name = "started_at")
@@ -37,5 +46,27 @@ public class Appointment {
   @ManyToOne
   @JoinColumn(name = "student_id")
   private Student student;
+
+  public static class StatusConverter implements AttributeConverter<Status, String> {
+
+    @Override
+    public String convertToDatabaseColumn(Status attribute) {
+      return attribute.getName();
+    }
+
+    @Override
+    public Status convertToEntityAttribute(String status) {
+      if (status.equals(Appointment.Status.PENDING.getName()))
+        return Appointment.Status.PENDING;
+
+      if (status.equals(Appointment.Status.ACCEPTED.getName()))
+        return Appointment.Status.ACCEPTED;
+
+      if (status.equals(Appointment.Status.DECLINED.getName()))
+        return Appointment.Status.DECLINED;
+
+      return null;
+    }
+  }
 
 }

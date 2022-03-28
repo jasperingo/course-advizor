@@ -3,6 +3,8 @@ package com.lovelyn.course_advizor.call;
 import com.lovelyn.course_advizor.Utils;
 import com.lovelyn.course_advizor.appointment.Appointment;
 import com.lovelyn.course_advizor.appointment.AppointmentRepository;
+import com.lovelyn.course_advizor.report.Report;
+import com.lovelyn.course_advizor.report.ReportRepository;
 import com.lovelyn.course_advizor.result.Result;
 import com.lovelyn.course_advizor.result.ResultRepository;
 import com.lovelyn.course_advizor.session.Session;
@@ -62,6 +64,10 @@ public class CallController {
   @Setter
   private AppointmentRepository appointmentRepository;
 
+  @Autowired
+  @Setter
+  private ReportRepository reportRepository;
+
   private String nextCallbackUrl(final String path) {
     return Utils.replaceUriLastPath(uriInfo.getAbsolutePath(), path);
   }
@@ -71,6 +77,7 @@ public class CallController {
   }
 
   @POST
+  @Path("test")
   public CallResponse test() {
 
     final CallResponse.Say say = new CallResponse.Say();
@@ -85,9 +92,31 @@ public class CallController {
   }
 
   @POST
-  @Path("start")
   @CallActive
-  public CallResponse start(@FormParam("callerNumber") final String phoneNumber, @FormParam("sessionId") final String callSessionId) {
+  public CallResponse start(@FormParam("direction") final Call.CallDirection callDirection) {
+
+    final CallResponse callResponse = new CallResponse();
+
+    final CallResponse.Redirect redirect = new CallResponse.Redirect();
+
+    switch (callDirection) {
+      case inbound -> redirect.setValue(nextCallbackUrl("inbound"));
+
+      case outbound -> redirect.setValue(nextCallbackUrl("outbound"));
+    }
+
+    callResponse.setRedirect(redirect);
+
+    return callResponse;
+  }
+
+  @POST
+  @Path("inbound")
+  @CallActive
+  public CallResponse inbound(
+    @FormParam("callerNumber") final String phoneNumber,
+    @FormParam("sessionId") final String callSessionId
+  ) {
 
     final Optional<Student> optionalStudent = studentRepository.findByPhoneNumber(phoneNumber);
 
@@ -104,6 +133,8 @@ public class CallController {
       call.setStatus(Call.Status.ACTIVE);
 
       call.setCallSessionId(callSessionId);
+
+      call.setCallDirection(Call.CallDirection.inbound);
 
       callRepository.save(call);
 
@@ -175,7 +206,7 @@ public class CallController {
   @Path("action")
   @CallActive
   @CallFetchByCallSessionId
-  public CallResponse action(@FormParam("dtmfDigits") final int actionNumber) {
+  public CallResponse action(@FormParam("dtmfDigits") final Call.Action action) {
 
     final Call call = getCall();
 
@@ -183,59 +214,73 @@ public class CallController {
 
     final CallResponse.Say say = new CallResponse.Say();
 
-    if (actionNumber == Call.Action.RESULT.number) {
+    if (action == null) {
 
-      call.setAction(Call.Action.RESULT);
-
-      callRepository.save(call);
-
-      say.setValue("Enter the session start year and end year, separated by an asterisks and press # key to send.");
-
-      final CallResponse.GetDigits getDigits = new CallResponse.GetDigits();
-
-      getDigits.setCallbackUrl(nextCallbackUrl("result-session"));
-
-      getDigits.setFinishOnKey("#");
-
-      getDigits.setSay(say);
-
-      callResponse.setGetDigits(getDigits);
-
-    } else if (actionNumber == Call.Action.APPOINTMENT.number) {
-
-      call.setAction(Call.Action.APPOINTMENT);
-
-      callRepository.save(call);
-
-      final Appointment appointment = new Appointment();
-
-      appointment.setStudent(call.getStudent());
-
-      appointment.setStatus(Appointment.Status.PENDING);
-
-      appointmentRepository.save(appointment);
-
-      say.setValue("Your appointment request is awaiting acceptance by your course adviser, thank you for calling.");
+      say.setValue("You pressed an invalid key, thank you for calling.");
 
       callResponse.setSay(say);
 
-    } else if (actionNumber == Call.Action.REPORT.number) {
+    } else {
 
-      call.setAction(Call.Action.REPORT);
+      switch (action) {
 
-      callRepository.save(call);
+        case RESULT -> {
 
-      say.setValue("Please say your report after the beep, and press the # key once you are done.");
+          call.setAction(Call.Action.RESULT);
 
-      final CallResponse.Record record = new CallResponse.Record();
+          callRepository.save(call);
 
-      record.setFinishOnKey("#");
+          say.setValue("Enter the session start year and end year, separated by an asterisks and press # key to send.");
 
-      record.setCallbackUrl(nextCallbackUrl("report"));
+          final CallResponse.GetDigits getDigits = new CallResponse.GetDigits();
 
-      record.setSay(say);
+          getDigits.setCallbackUrl(nextCallbackUrl("result-session"));
 
-      callResponse.setRecord(record);
+          getDigits.setFinishOnKey("#");
+
+          getDigits.setSay(say);
+
+          callResponse.setGetDigits(getDigits);
+        }
+
+        case APPOINTMENT -> {
+
+          call.setAction(Call.Action.APPOINTMENT);
+
+          callRepository.save(call);
+
+          final Appointment appointment = new Appointment();
+
+          appointment.setStudent(call.getStudent());
+
+          appointment.setStatus(Appointment.Status.PENDING);
+
+          appointmentRepository.save(appointment);
+
+          say.setValue("Your appointment request is awaiting acceptance by your course adviser, thank you for calling.");
+
+          callResponse.setSay(say);
+        }
+
+        case REPORT -> {
+
+          call.setAction(Call.Action.REPORT);
+
+          callRepository.save(call);
+
+          say.setValue("Please say your report after the beep, and press the # key once you are done.");
+
+          final CallResponse.Record record = new CallResponse.Record();
+
+          record.setFinishOnKey("#");
+
+          record.setCallbackUrl(nextCallbackUrl("report"));
+
+          record.setSay(say);
+
+          callResponse.setRecord(record);
+        }
+      }
     }
 
     return callResponse;
@@ -317,7 +362,7 @@ public class CallController {
   @Path("result")
   @CallActive
   @CallFetchByCallSessionId
-  public CallResponse result(@FormParam("dtmfDigits") final int semesterNumber) {
+  public CallResponse result(@FormParam("dtmfDigits") final Result.Semester semester) {
 
     final CallResponse callResponse = new CallResponse();
 
@@ -327,16 +372,18 @@ public class CallController {
 
     try {
 
+      if (semester == null) throw new IllegalArgumentException();
+
       List<Result> results = null;
 
-      if (semesterNumber == Result.Semester.FIRST.number) {
-        results = resultRepository.findAllByCourseAdviserIdAndSessionIdAndSemester(
+      switch (semester) {
+        case FIRST -> results = resultRepository.findAllByCourseAdviserIdAndSessionIdAndSemester(
           call.getStudent().getCourseAdviser().getId(),
           call.getSession().getId(),
           Result.Semester.FIRST
         );
-      } else if (semesterNumber == Result.Semester.SECOND.number) {
-        results = resultRepository.findAllByCourseAdviserIdAndSessionIdAndSemester(
+
+        case SECOND -> results = resultRepository.findAllByCourseAdviserIdAndSessionIdAndSemester(
           call.getStudent().getCourseAdviser().getId(),
           call.getSession().getId(),
           Result.Semester.SECOND
@@ -347,10 +394,12 @@ public class CallController {
 
       final String resultString = results.stream()
         .map(result -> {
+
           final List<StudentResult> studentResults = studentResultRepository.findAllByStudentIdAndResultId(
             call.getStudent().getId(),
             result.getId()
           );
+
           return studentResults.size() < 1 ? null
             : String.format("in %s you got %s", result.getCourseCode(), studentResults.get(0).getGrade());
         })
@@ -374,21 +423,53 @@ public class CallController {
   }
 
   @POST
+  @Path("report")
+  @CallActive
+  @CallFetchByCallSessionId
+  public CallResponse report(@FormParam("recordingUrl") final String recordingUrl) {
+
+    final CallResponse callResponse = new CallResponse();
+
+    final CallResponse.Say say = new CallResponse.Say();
+
+    final Call call = getCall();
+
+    final Report report = new Report();
+
+    report.setRecordUrl(recordingUrl);
+
+    report.setStudent(call.getStudent());
+
+    reportRepository.save(report);
+
+    say.setValue("Your report has been sent to your course adviser, thank you for calling.");
+
+    callResponse.setSay(say);
+
+    return callResponse;
+  }
+
+
+  @POST
+  @Path("outbound")
+  @CallActive
+  @CallFetchByCallSessionId
+  public CallResponse outbound() {
+
+    return new CallResponse();
+  }
+
+
+  @POST
   @Path("end")
   @CallFetchByCallSessionId
-  public void end(
-    @FormParam("durationInSeconds") final Long callDuration,
-    @FormParam("amount") final Double callCost,
-    @FormParam("recordingUrl") final String recordingUrl
-  ) {
+  public void end(@FormParam("durationInSeconds") final Long callDuration, @FormParam("amount") final Double callCost) {
 
     final Call call = getCall();
 
     call.setCost(callCost);
 
     call.setDuration(callDuration);
-
-    call.setRecordUrl(recordingUrl);
 
     call.setStatus(Call.Status.INACTIVE);
 

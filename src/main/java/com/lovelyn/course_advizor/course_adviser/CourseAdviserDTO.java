@@ -5,14 +5,11 @@ import com.lovelyn.course_advizor.department.DepartmentDTO;
 import com.lovelyn.course_advizor.session.SessionDTO;
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
-
 @Data
 public class CourseAdviserDTO {
 
     private Long id;
 
-    @NotEmpty
     @JsonProperty("first_name")
     private String firstName;
 

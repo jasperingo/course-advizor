@@ -3,8 +3,8 @@ package com.lovelyn.course_advizor.course_adviser;
 import com.lovelyn.course_advizor.ResponseDTO;
 import com.lovelyn.course_advizor.Utils;
 import com.lovelyn.course_advizor.department.DepartmentRepository;
-import com.lovelyn.course_advizor.validation.ValidationErrorCode;
 import com.lovelyn.course_advizor.session.SessionRepository;
+import com.lovelyn.course_advizor.validation.ValidationErrorCode;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +24,10 @@ import java.util.Optional;
 @Produces(MediaType.APPLICATION_JSON)
 public class CourseAdviserController {
 
+  @Context
+  @Setter
+  private ContainerRequestContext requestContainer;
+
   @Autowired
   @Setter
   private CourseAdviserRepository repository;
@@ -39,6 +43,10 @@ public class CourseAdviserController {
   @Autowired
   @Setter
   private ModelMapper modelMapper;
+
+  private CourseAdviser getCourseAdviser() {
+    return (CourseAdviser) requestContainer.getProperty(CourseAdviserAuthenticationFilter.REQUEST_PROPERTY);
+  }
 
   @POST
   public Response create(
@@ -59,7 +67,7 @@ public class CourseAdviserController {
 
     return Response
       .created(uriInfo.getAbsolutePath())
-      .entity(new ResponseDTO<>(ResponseDTO.Status.SUCCESS, "Course adviser created", responseEntity))
+      .entity(ResponseDTO.success("Course adviser created", responseEntity))
       .build();
   }
 
@@ -76,7 +84,7 @@ public class CourseAdviserController {
       final CourseAdviserDTO responseEntity = modelMapper.map(courseAdviser, CourseAdviserDTO.class);
 
       return Response
-        .ok(new ResponseDTO<>(ResponseDTO.Status.SUCCESS, "Authenticated", responseEntity))
+        .ok(ResponseDTO.success("Authenticated", responseEntity))
         .build();
 
     } else {
@@ -86,14 +94,12 @@ public class CourseAdviserController {
 
   @GET
   @CourseAdviserAuthentication
-  public Response get(@Context final ContainerRequestContext requestContainer) {
+  public Response get() {
 
-    final CourseAdviser courseAdviser = (CourseAdviser) requestContainer.getProperty("user");
-
-    final CourseAdviserDTO courseAdviserDTO = modelMapper.map(courseAdviser, CourseAdviserDTO.class);
+    final CourseAdviserDTO courseAdviserDTO = modelMapper.map(getCourseAdviser(), CourseAdviserDTO.class);
 
     return Response
-      .ok(new ResponseDTO<>(ResponseDTO.Status.SUCCESS, "Course Adviser fetched", courseAdviserDTO))
+      .ok(ResponseDTO.success("Course Adviser fetched", courseAdviserDTO))
       .build();
   }
 

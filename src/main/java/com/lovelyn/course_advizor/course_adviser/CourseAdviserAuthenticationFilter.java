@@ -19,6 +19,8 @@ import java.util.Optional;
 @Priority(Priorities.AUTHENTICATION)
 public class CourseAdviserAuthenticationFilter implements ContainerRequestFilter {
 
+  public static final String REQUEST_PROPERTY = "user";
+
   @Autowired
   @Setter
   private CourseAdviserRepository repository;
@@ -33,7 +35,7 @@ public class CourseAdviserAuthenticationFilter implements ContainerRequestFilter
         try {
           Optional<CourseAdviser> courseAdviserOptional = repository.findById(Long.valueOf(token));
           courseAdviserOptional.ifPresentOrElse(
-            courseAdviser -> requestContext.setProperty("user", courseAdviser),
+            courseAdviser -> requestContext.setProperty(REQUEST_PROPERTY, courseAdviser),
             () -> requestContext.abortWith(getNotAuthResponse())
           );
         } catch (NumberFormatException ignored) {

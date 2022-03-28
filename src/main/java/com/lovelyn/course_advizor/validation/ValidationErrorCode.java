@@ -93,4 +93,14 @@ public class ValidationErrorCode {
     public final static String GRADE_REQUIRED = "grade / "+FIELD_REQUIRED+" / Grade is required";
 
 
+    public final static String STATUS_REQUIRED = "status / "+FIELD_REQUIRED+" / Status is required";
+
+
+    public final static String STARTED_AT_REQUIRED = "started_at / "+FIELD_REQUIRED+" / Started at is required";
+
+    public final static String STARTED_AT_PAST = "started_at / "+FIELD_INVALID+" / Started at must be a future date";
+
+
+    public final static String REPLY_REQUIRED = "reply / "+FIELD_REQUIRED+" / Reply is required";
+
 }

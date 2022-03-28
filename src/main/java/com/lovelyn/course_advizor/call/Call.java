@@ -1,5 +1,7 @@
 package com.lovelyn.course_advizor.call;
 
+import com.lovelyn.course_advizor.appointment.Appointment;
+import com.lovelyn.course_advizor.report.Report;
 import com.lovelyn.course_advizor.session.Session;
 import com.lovelyn.course_advizor.student.Student;
 import lombok.Getter;
@@ -10,6 +12,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -19,9 +22,7 @@ import java.time.LocalDateTime;
 @Table(name = "calls")
 public class Call {
 
-  public enum Status {
-    ACTIVE, INACTIVE
-  }
+  public enum Status { ACTIVE, INACTIVE }
 
   public enum Action {
     RESULT(1, "one"),
@@ -36,7 +37,25 @@ public class Call {
       this.number = number;
       this.word = word;
     }
+
+    public static Action fromString(final String value) {
+
+      final Integer number = Integer.valueOf(value);
+
+      if (Objects.equals(number, RESULT.number))
+        return RESULT;
+
+      if (Objects.equals(number, APPOINTMENT.number))
+        return APPOINTMENT;
+
+      if (Objects.equals(number, REPORT.number))
+        return APPOINTMENT;
+
+      return null;
+    }
   }
+
+  public enum CallDirection { inbound, outbound }
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -49,11 +68,12 @@ public class Call {
   @Convert(converter = StatusConverter.class)
   private Status status;
 
-  @Column(name = "record_url")
-  private String recordUrl;
-
   @Convert(converter = ActionConverter.class)
   private Action action;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "call_direction")
+  private CallDirection callDirection;
 
   private Long duration;
 
@@ -70,6 +90,14 @@ public class Call {
   @ManyToOne
   @JoinColumn(name = "session_id")
   private Session session;
+
+  @OneToOne
+  @JoinColumn(name = "appointment_id")
+  private Appointment appointment;
+
+  @OneToOne
+  @JoinColumn(name = "report_id")
+  private Report report;
 
   public static class StatusConverter implements AttributeConverter<Status, String> {
 
