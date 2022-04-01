@@ -1,5 +1,6 @@
 package com.lovelyn.course_advizor.student;
 
+import com.lovelyn.course_advizor.Utils;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,7 +15,7 @@ public class StudentPhoneNumberAlreadyExistsValidator implements ConstraintValid
 
   @Override
   public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
-    return !studentRepository.existsByPhoneNumber(s);
+    return !studentRepository.existsByPhoneNumber(Utils.phoneNumberToInternationalFormat(s));
   }
 
 }
