@@ -14,4 +14,6 @@ public interface ResultRepository extends JpaRepository<Result, Long> {
 
   List<Result> findAllByCourseAdviserIdAndSessionIdAndSemester(Long courseAdviserId, Long sessionId, Result.Semester semester);
 
+  Long countByCourseAdviserId(Long courseAdviserId);
+
 }

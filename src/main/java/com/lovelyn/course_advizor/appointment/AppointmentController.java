@@ -56,6 +56,7 @@ public class AppointmentController {
 
   @PUT
   @Path("{id}")
+  @CourseAdviserAuthentication
   public Response update(
     @PathParam("id") final Long id,
     @NotNull(message = ValidationErrorCode.BODY_INVALID) @Valid final AppointmentUpdateDTO appointmentUpdateDTO
