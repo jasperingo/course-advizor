@@ -2,8 +2,8 @@ package com.lovelyn.course_advizor.course_adviser;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lovelyn.course_advizor.department.DepartmentIdExists;
-import com.lovelyn.course_advizor.validation.ValidationErrorCode;
 import com.lovelyn.course_advizor.session.SessionIdExists;
+import com.lovelyn.course_advizor.validation.ValidationErrorCode;
 import com.lovelyn.course_advizor.validation.ValidationGroupSequence;
 import lombok.Data;
 
@@ -11,6 +11,10 @@ import javax.validation.GroupSequence;
 import javax.validation.constraints.*;
 
 @Data
+@CourseAdviserWithSessionIdAndDepartmentIdAlreadyExists(
+  message = ValidationErrorCode.COURSE_ADVISER_WITH_SESSION_ID_AND_DEPARTMENT_ID_EXISTS,
+  groups = ValidationGroupSequence.ValidationGroupFour.class
+)
 @GroupSequence({CourseAdviserCreateDTO.class, ValidationGroupSequence.class})
 public class CourseAdviserCreateDTO {
 

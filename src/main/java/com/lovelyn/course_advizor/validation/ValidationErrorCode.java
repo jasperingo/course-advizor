@@ -62,6 +62,8 @@ public class ValidationErrorCode {
 
     public final static String COURSE_ADVISER_ID_DO_NOT_EXIST = "course_adviser_id / "+FIELD_DO_NOT_EXIST+" / Course adviser with id ${validatedValue} do not exist";
 
+    public final static String COURSE_ADVISER_WITH_SESSION_ID_AND_DEPARTMENT_ID_EXISTS = "request_body / COURSE_ADVISER_WITH_SESSION_ID_AND_DEPARTMENT_ID_EXISTS / Course adviser with session id and department id already exists";
+
 
     public final static String COURSE_CODE_BLANK = "course_code / "+FIELD_REQUIRED+" / Course code is required";
 
