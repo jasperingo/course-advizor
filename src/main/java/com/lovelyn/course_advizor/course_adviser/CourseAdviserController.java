@@ -88,7 +88,7 @@ public class CourseAdviserController {
   @Path("auth")
   public Response auth(@NotNull(message = ValidationErrorCode.BODY_INVALID) @Valid final CourseAdviserAuthDTO courseAdviserDTO) {
 
-    final Optional<CourseAdviser> courseAdviserOptional = repository.findByPhoneNumber(courseAdviserDTO.getPhoneNumber());
+    final Optional<CourseAdviser> courseAdviserOptional = repository.findByPhoneNumber(Utils.phoneNumberToInternationalFormat(courseAdviserDTO.getPhoneNumber()));
 
     final CourseAdviser courseAdviser = courseAdviserOptional.orElseThrow(()-> new NotAuthorizedException("Credentials are incorrect"));
 
