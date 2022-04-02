@@ -10,32 +10,18 @@ import javax.validation.constraints.Size;
 @Data
 public class CourseAdviserAuthDTO {
 
-  @NotBlank(
-    message = "pin / "+
-      ValidationErrorCode.FIELD_INVALID +
-      " / Pin is required"
-  )
+  @NotBlank(message = ValidationErrorCode.PIN_REQUIRED)
   @Size(
-    min = 4,
-    max = 4,
-    message = "pin / "+
-      ValidationErrorCode.FIELD_INVALID +
-      " / Pin must be {max} characters long"
+    min = 4, max = 4,
+    message = ValidationErrorCode.PIN_SIZE
   )
   private String pin;
 
   @JsonProperty("phone_number")
-  @NotBlank(
-    message = "phone_number / "+
-      ValidationErrorCode.FIELD_INVALID +
-      " / Phone number is required"
-  )
+  @NotBlank(message = ValidationErrorCode.PHONE_NUMBER_REQUIRED)
   @Size(
-    max = 11,
-    min = 11,
-    message = "phone_number / "+
-      ValidationErrorCode.FIELD_INVALID +
-      " / Phone number must be {max} characters long"
+    max = 11, min = 11,
+    message = ValidationErrorCode.PHONE_NUMBER_SIZE
   )
   private String phoneNumber;
 
