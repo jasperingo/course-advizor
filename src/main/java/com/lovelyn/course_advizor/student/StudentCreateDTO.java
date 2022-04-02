@@ -42,7 +42,7 @@ public class StudentCreateDTO {
   )
   @StudentMatriculationNumberAlreadyExists(
     message = ValidationErrorCode.MATRICULATION_NUMBER_EXISTS,
-    groups = ValidationGroupSequence.ValidationGroupFour.class
+    groups = ValidationGroupSequence.ValidationGroupThree.class
   )
   private String matriculationNumber;
 
