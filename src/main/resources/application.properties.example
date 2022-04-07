@@ -7,3 +7,8 @@ spring.datasource.username=root
 spring.datasource.password=
 
 spring.jackson.deserialization.READ_UNKNOWN_ENUM_VALUES_AS_NULL=true
+
+af.APIKey=
+af.appUsername=
+af.phoneNumber=
+af.APIEndPoint=

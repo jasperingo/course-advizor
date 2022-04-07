@@ -1,6 +1,7 @@
 package com.lovelyn.course_advizor.report;
 
 import com.lovelyn.course_advizor.ResponseDTO;
+import com.lovelyn.course_advizor.call.CallOutboundService;
 import com.lovelyn.course_advizor.course_adviser.CourseAdviser;
 import com.lovelyn.course_advizor.course_adviser.CourseAdviserAuthentication;
 import com.lovelyn.course_advizor.course_adviser.CourseAdviserAuthenticationFilter;
@@ -34,6 +35,10 @@ public class ReportController {
   @Autowired
   @Setter
   private ModelMapper modelMapper;
+
+  @Autowired
+  @Setter
+  private CallOutboundService reportCallService;
 
   private CourseAdviser getCourseAdviser() {
     return (CourseAdviser) requestContainer.getProperty(CourseAdviserAuthenticationFilter.REQUEST_PROPERTY);
@@ -78,7 +83,7 @@ public class ReportController {
 
       responseBuilder = Response.ok(ResponseDTO.success("Report updated", reportDTO));
 
-      // TODO: send call to student...
+      reportCallService.sendCall(report);
 
     } else {
       responseBuilder = Response

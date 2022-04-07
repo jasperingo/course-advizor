@@ -1,6 +1,7 @@
 package com.lovelyn.course_advizor.appointment;
 
 import com.lovelyn.course_advizor.ResponseDTO;
+import com.lovelyn.course_advizor.call.CallOutboundService;
 import com.lovelyn.course_advizor.course_adviser.CourseAdviser;
 import com.lovelyn.course_advizor.course_adviser.CourseAdviserAuthentication;
 import com.lovelyn.course_advizor.course_adviser.CourseAdviserAuthenticationFilter;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Path("appointment")
-@Produces(MediaType.APPLICATION_JSON)
+@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
 public class AppointmentController {
 
   @Context
@@ -34,6 +35,10 @@ public class AppointmentController {
   @Autowired
   @Setter
   private ModelMapper modelMapper;
+
+  @Autowired
+  @Setter
+  private CallOutboundService appointmentCallService;
 
   private CourseAdviser getCourseAdviser() {
     return (CourseAdviser) requestContainer.getProperty(CourseAdviserAuthenticationFilter.REQUEST_PROPERTY);
@@ -80,7 +85,7 @@ public class AppointmentController {
 
       responseBuilder = Response.ok(ResponseDTO.success("Appointment updated", appointmentDTO));
 
-      // TODO: send call to student...
+      appointmentCallService.sendCall(appointment);
 
     } else {
       responseBuilder = Response
@@ -90,5 +95,4 @@ public class AppointmentController {
 
     return responseBuilder.build();
   }
-
 }

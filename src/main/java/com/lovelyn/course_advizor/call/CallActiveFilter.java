@@ -1,6 +1,5 @@
 package com.lovelyn.course_advizor.call;
 
-import com.lovelyn.course_advizor.Utils;
 import lombok.Setter;
 import org.glassfish.jersey.server.ContainerRequest;
 
@@ -14,6 +13,7 @@ import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
+import java.util.Optional;
 
 @Provider
 @CallActive
@@ -23,6 +23,10 @@ public class CallActiveFilter implements ContainerRequestFilter {
   @Context
   @Setter
   private UriInfo uriInfo;
+
+  @Context
+  @Setter
+  private CallRepository callRepository;
 
   @Override
   public void filter(final ContainerRequestContext requestContext) {
@@ -35,27 +39,34 @@ public class CallActiveFilter implements ContainerRequestFilter {
 
       final Form form = containerRequest.readEntity(Form.class);
 
-      String isActive = form.asMap().get("isActive").get(0);
+      final String isActive = form.asMap().get("isActive").get(0);
 
-      if (isActive.equals("0"))
-        throw new IllegalArgumentException();
+      if (isActive.equals("0")) {
+        final String callSessionId = form.asMap().get("sessionId").get(0);
+        final Long callDuration = Long.valueOf(form.asMap().get("durationInSeconds").get(0));
+        final Double callCost = Double.valueOf(form.asMap().get("amount").get(0));
 
-    } catch (ProcessingException | NullPointerException | IndexOutOfBoundsException | IllegalArgumentException e) {
-      requestContext.abortWith(redirect());
+        final Optional<Call> optionalCall = callRepository.findByCallSessionId(callSessionId);
+
+        if (optionalCall.isPresent()) {
+
+          final Call call = optionalCall.get();
+
+          call.setCost(callCost);
+
+          call.setDuration(callDuration);
+
+          call.setStatus(Call.Status.INACTIVE);
+
+          callRepository.save(call);
+        }
+
+        requestContext.abortWith(Response.ok().build());
+      }
+
+    } catch (ProcessingException | NullPointerException | IndexOutOfBoundsException e) {
+      requestContext.abortWith(Response.serverError().build());
     }
-  }
-
-  private Response redirect() {
-
-    final CallResponse callResponse = new CallResponse();
-
-    final CallResponse.Redirect redirect = new CallResponse.Redirect();
-
-    redirect.setValue(Utils.replaceUriLastPath(uriInfo.getAbsolutePath(), "end"));
-
-    callResponse.setRedirect(redirect);
-
-    return Response.ok(callResponse).build();
   }
 
 }

@@ -100,9 +100,9 @@ public class CallController {
     final CallResponse.Redirect redirect = new CallResponse.Redirect();
 
     switch (callDirection) {
-      case inbound -> redirect.setValue(nextCallbackUrl("inbound"));
+      case Inbound -> redirect.setValue(String.format("%s/%s", uriInfo.getAbsolutePath(), "inbound"));
 
-      case outbound -> redirect.setValue(nextCallbackUrl("outbound"));
+      case Outbound -> redirect.setValue(String.format("%s/%s", uriInfo.getAbsolutePath(), "outbound"));
     }
 
     callResponse.setRedirect(redirect);
@@ -134,7 +134,7 @@ public class CallController {
 
       call.setCallSessionId(callSessionId);
 
-      call.setCallDirection(Call.CallDirection.inbound);
+      call.setCallDirection(Call.CallDirection.Inbound);
 
       callRepository.save(call);
 
@@ -456,24 +456,33 @@ public class CallController {
   @CallFetchByCallSessionId
   public CallResponse outbound() {
 
-    return new CallResponse();
-  }
+    Call call = getCall();
 
+    final CallResponse callResponse = new CallResponse();
 
-  @POST
-  @Path("end")
-  @CallFetchByCallSessionId
-  public void end(@FormParam("durationInSeconds") final Long callDuration, @FormParam("amount") final Double callCost) {
+    final CallResponse.Say say = new CallResponse.Say();
 
-    final Call call = getCall();
+    if (call.getAppointment() != null) {
 
-    call.setCost(callCost);
+      say.setValue(
+        String.format("Your course adviser has accepted your appointment request, please take this down, the date of your meeting is on the %s. Thanks for listening.",
+          call.getAppointment().getStartedAt().toString())
+      );
 
-    call.setDuration(callDuration);
+    } else if (call.getReport() != null) {
 
-    call.setStatus(Call.Status.INACTIVE);
+      say.setValue(
+        String.format("Your course adviser has replied to your report, please take this down, he or she said \"%s\". Thanks for listening.",
+          call.getReport().getReply())
+      );
 
-    callRepository.save(call);
+    } else {
+      say.setValue("Sorry this is an invalid call.");
+    }
+
+    callResponse.setSay(say);
+
+    return callResponse;
   }
 
 }

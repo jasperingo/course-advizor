@@ -49,13 +49,13 @@ public class Call {
         return APPOINTMENT;
 
       if (Objects.equals(number, REPORT.number))
-        return APPOINTMENT;
+        return REPORT;
 
       return null;
     }
   }
 
-  public enum CallDirection { inbound, outbound }
+  public enum CallDirection { Inbound, Outbound }
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)

@@ -15,7 +15,7 @@ import javax.ws.rs.ext.Provider;
 import java.util.Optional;
 
 @Provider
-@Priority(Priorities.USER)
+@Priority(Priorities.AUTHENTICATION)
 @CallFetchByCallSessionId
 public class CallFetchByCallSessionIdFilter implements ContainerRequestFilter {
 
