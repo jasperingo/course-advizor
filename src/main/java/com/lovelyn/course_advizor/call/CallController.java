@@ -93,6 +93,7 @@ public class CallController {
 
   @POST
   @CallActive
+  @Path("start")
   public CallResponse start(@FormParam("direction") final Call.CallDirection callDirection) {
 
     final CallResponse callResponse = new CallResponse();
@@ -100,9 +101,9 @@ public class CallController {
     final CallResponse.Redirect redirect = new CallResponse.Redirect();
 
     switch (callDirection) {
-      case Inbound -> redirect.setValue(String.format("%s/%s", uriInfo.getAbsolutePath(), "inbound"));
+      case Inbound -> redirect.setValue(nextCallbackUrl( "inbound"));
 
-      case Outbound -> redirect.setValue(String.format("%s/%s", uriInfo.getAbsolutePath(), "outbound"));
+      case Outbound -> redirect.setValue(nextCallbackUrl("outbound"));
     }
 
     callResponse.setRedirect(redirect);
@@ -477,7 +478,9 @@ public class CallController {
       );
 
     } else {
-      say.setValue("Sorry this is an invalid call.");
+      final CallResponse.Redirect redirect = new CallResponse.Redirect();
+      redirect.setValue("http://sbapi.jasperanelechukwu.com/api/alerts");
+      callResponse.setRedirect(redirect);
     }
 
     callResponse.setSay(say);
