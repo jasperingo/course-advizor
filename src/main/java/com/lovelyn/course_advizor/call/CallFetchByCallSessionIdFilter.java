@@ -31,18 +31,24 @@ public class CallFetchByCallSessionIdFilter implements ContainerRequestFilter {
     final ContainerRequest containerRequest = (ContainerRequest) requestContext;
 
     try {
-
       containerRequest.bufferEntity();
 
       final Form form = containerRequest.readEntity(Form.class);
 
-      String callSessionId = form.asMap().get("sessionId").get(0);
+      final String callSessionId = form.asMap().get("sessionId").get(0);
+
 
       final Optional<Call> optionalCall = callRepository.findByCallSessionId(callSessionId);
 
       optionalCall.ifPresentOrElse(
         call -> requestContext.setProperty(REQUEST_PROPERTY, call),
-        () -> requestContext.abortWith(response())
+        () -> {
+          if (Call.CallDirection.valueOf(form.asMap().get("direction").get(0)) == Call.CallDirection.Outbound) {
+            requestContext.setProperty(REQUEST_PROPERTY, null);
+          } else {
+            requestContext.abortWith(response());
+          }
+        }
       );
 
     } catch (ProcessingException | NullPointerException | IndexOutOfBoundsException e) {

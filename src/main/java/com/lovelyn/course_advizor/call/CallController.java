@@ -15,6 +15,8 @@ import com.lovelyn.course_advizor.student_result.StudentResult;
 import com.lovelyn.course_advizor.student_result.StudentResultRepository;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -27,10 +29,13 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Component
 @Path("call")
 @Produces(MediaType.APPLICATION_XML)
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 public class CallController {
+  @Value("${af.redirectInvalidOutboundCall}")
+  private String redirectInvalidOutboundCall;
 
   @Context
   @Setter
@@ -95,7 +100,6 @@ public class CallController {
   @CallActive
   @Path("start")
   public CallResponse start(@FormParam("direction") final Call.CallDirection callDirection) {
-
     final CallResponse callResponse = new CallResponse();
 
     final CallResponse.Redirect redirect = new CallResponse.Redirect();
@@ -450,42 +454,53 @@ public class CallController {
     return callResponse;
   }
 
-
   @POST
   @Path("outbound")
   @CallActive
   @CallFetchByCallSessionId
   public CallResponse outbound() {
-
-    Call call = getCall();
+    final Call call = getCall();
 
     final CallResponse callResponse = new CallResponse();
 
-    final CallResponse.Say say = new CallResponse.Say();
+    if (call != null) {
+      final CallResponse.Say say = new CallResponse.Say();
 
-    if (call.getAppointment() != null) {
+      if (call.getAppointment() != null) {
 
-      say.setValue(
-        String.format("Your course adviser has accepted your appointment request, please take this down, the date of your meeting is on the %s. Thanks for listening.",
-          call.getAppointment().getStartedAt().toString())
-      );
+        String message = String.format("the date of your meeting is on the %s", call.getAppointment().getStartedAt().toString());
 
-    } else if (call.getReport() != null) {
+        say.setValue(
+          String.format(
+            "Your course adviser has accepted your appointment request, please take this down, %s. I repeat, %s. Thanks for listening.",
+            message,
+            message
+          )
+        );
 
-      say.setValue(
-        String.format("Your course adviser has replied to your report, please take this down, he or she said \"%s\". Thanks for listening.",
-          call.getReport().getReply())
-      );
+      } else if (call.getReport() != null) {
 
+        String message = String.format("he or she said \"%s\"", call.getReport().getReply());
+
+        say.setValue(
+          String.format(
+            "Your course adviser has replied to your report, please take this down, %s. I repeat, %s. Thanks for listening.",
+            message,
+            message
+          )
+        );
+
+      } else {
+        say.setValue("Sorry this is an invalid call.");
+      }
+
+      callResponse.setSay(say);
     } else {
       final CallResponse.Redirect redirect = new CallResponse.Redirect();
-      redirect.setValue("http://sbapi.jasperanelechukwu.com/api/alerts");
+      redirect.setValue(redirectInvalidOutboundCall);
       callResponse.setRedirect(redirect);
     }
 
-    callResponse.setSay(say);
-
     return callResponse;
   }
-
 }

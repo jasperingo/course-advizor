@@ -12,5 +12,4 @@ af.APIKey=
 af.appUsername=
 af.phoneNumber=
 af.APIEndPoint=
-
-server.port=
+af.redirectInvalidOutboundCall=
