@@ -74,7 +74,7 @@ public class CallController {
   private ReportRepository reportRepository;
 
   private String nextCallbackUrl(final String path) {
-    return Utils.replaceUriLastPath(uriInfo.getAbsolutePath(), path);
+    return Utils.replaceUriLastPath(uriInfo.getAbsolutePath(), path, containerRequestContext.getHeaderString("x-forwarded-proto"));
   }
 
   private Call getCall() {
@@ -84,10 +84,9 @@ public class CallController {
   @POST
   @Path("test")
   public CallResponse test() {
-
     final CallResponse.Say say = new CallResponse.Say();
 
-    say.setValue("Welcome to Course Adviser application");
+    say.setValue("Welcome the call application");
 
     final CallResponse callResponse = new CallResponse();
 
